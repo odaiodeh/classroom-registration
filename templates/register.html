@@ -221,6 +221,12 @@
                 // Show success alert
                 showAlert(data.message, 'success');
                 
+                // Add celebration effect
+                document.body.style.backgroundColor = '#4CAF50';
+                setTimeout(() => {
+                    document.body.style.backgroundColor = '';
+                }, 500);
+                
                 // Focus back to name field for next registration
                 setTimeout(() => {
                     document.getElementById('studentName').focus();

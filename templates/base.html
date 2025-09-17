@@ -90,57 +90,152 @@
         .class-card {
             background: white;
             border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            margin-bottom: 15px;
             transition: all 0.3s ease;
             border: 3px solid transparent;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
         }
         
         .class-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
         }
         
         .class-header {
-            padding: 20px;
+            padding: 15px 10px;
             border-radius: 12px 12px 0 0;
             color: white;
             text-align: center;
+            flex-shrink: 0;
         }
         
         .class-name {
-            font-size: 1.4rem;
+            font-size: 1.1rem;
             font-weight: 600;
             margin: 0;
+            line-height: 1.2;
         }
         
         .student-count {
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             opacity: 0.9;
             margin-top: 5px;
         }
         
         .class-body {
-            padding: 20px;
+            padding: 15px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
         }
         
         .students-list {
             background: #f8f9fa;
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 15px;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 12px;
             min-height: 120px;
-            max-height: 200px;
+            max-height: 180px;
             overflow-y: auto;
+            flex: 1;
+            font-size: 0.85rem;
+        }
+        
+        /* Responsive adjustments for different screen sizes */
+        @media (min-width: 1400px) {
+            .container-fluid .main-container {
+                max-width: 95%;
+            }
+            
+            .class-name {
+                font-size: 1.2rem;
+            }
+            
+            .students-list {
+                max-height: 200px;
+                font-size: 0.9rem;
+            }
+            
+            .class-header {
+                padding: 18px 12px;
+            }
+            
+            .class-body {
+                padding: 18px;
+            }
+        }
+        
+        @media (min-width: 1800px) {
+            .container-fluid .main-container {
+                max-width: 98%;
+            }
+            
+            .class-card {
+                margin-bottom: 20px;
+            }
+            
+            .class-name {
+                font-size: 1.3rem;
+            }
+            
+            .students-list {
+                max-height: 220px;
+                font-size: 0.95rem;
+                padding: 12px;
+            }
+            
+            .class-header {
+                padding: 20px 15px;
+            }
+            
+            .class-body {
+                padding: 20px;
+            }
+        }
+        
+        /* Ultra-wide screens (monitors larger than 2000px) */
+        @media (min-width: 2000px) {
+            .container-fluid .main-container {
+                max-width: 99%;
+            }
+            
+            .grade-section {
+                margin-bottom: 50px;
+            }
+            
+            .row.g-3 {
+                --bs-gutter-x: 1rem;
+                --bs-gutter-y: 1rem;
+            }
+            
+            .class-name {
+                font-size: 1.4rem;
+            }
+            
+            .students-list {
+                max-height: 250px;
+                font-size: 1rem;
+                padding: 15px;
+            }
         }
         
         .student-item {
             background: white;
-            padding: 8px 15px;
-            margin-bottom: 8px;
-            border-radius: 8px;
-            border-right: 4px solid var(--primary-color);
+            padding: 6px 10px;
+            margin-bottom: 6px;
+            border-radius: 6px;
+            border-right: 3px solid var(--primary-color);
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            font-size: inherit;
+            line-height: 1.3;
+        }
+        
+        .student-item i {
+            font-size: 0.8em;
+            opacity: 0.7;
         }
         
         .no-students {
@@ -152,15 +247,18 @@
         
         .action-buttons {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             justify-content: space-between;
+            margin-top: auto;
         }
         
         .btn-custom {
-            border-radius: 10px;
+            border-radius: 8px;
             font-weight: 500;
-            padding: 10px 20px;
+            padding: 8px 12px;
             transition: all 0.3s ease;
+            font-size: 0.85rem;
+            flex: 1;
         }
         
         .btn-add {
@@ -194,6 +292,19 @@
             justify-content: center;
             gap: 15px;
             z-index: 1000;
+        }
+        
+        /* Big screen optimizations for floating buttons */
+        @media (min-width: 1400px) {
+            .floating-buttons {
+                bottom: 30px;
+                gap: 20px;
+            }
+            
+            .floating-btn {
+                padding: 18px 35px;
+                font-size: 18px;
+            }
         }
         
         .floating-btn {
@@ -290,6 +401,165 @@
                 opacity: 1;
                 transform: translateY(0);
             }
+        }
+        
+        /* Real-time notification styles */
+        .new-registration-notification {
+            position: fixed;
+            top: 100px;
+            right: 30px;
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(76, 175, 80, 0.3);
+            z-index: 9999;
+            animation: slideInRight 0.5s ease-out, fadeOut 0.5s ease-out 4.5s forwards;
+            border: 2px solid #fff;
+            min-width: 250px;
+        }
+        
+        .notification-content {
+            text-align: center;
+            font-weight: 500;
+        }
+        
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+                transform: translateX(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 15px 40px rgba(76, 175, 80, 0.3);
+            }
+            100% {
+                transform: scale(1);
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            }
+        }
+        
+        .new-student {
+            background: linear-gradient(135deg, #4CAF50, #45a049) !important;
+            color: white !important;
+            animation: newStudentGlow 3s ease-out;
+        }
+        
+        @keyframes newStudentGlow {
+            0% {
+                background: linear-gradient(135deg, #4CAF50, #45a049);
+                transform: scale(1.05);
+                box-shadow: 0 5px 15px rgba(76, 175, 80, 0.5);
+            }
+            100% {
+                background: white;
+                color: var(--text-primary);
+                transform: scale(1);
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            }
+        }
+        
+        /* Live indicator */
+        .live-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #ff4444;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            z-index: 1000;
+            animation: liveBlink 2s infinite;
+        }
+        
+        @keyframes liveBlink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0.7; }
+        }
+        
+        .live-indicator::before {
+            content: "●";
+            margin-left: 5px;
+            animation: livePulse 1s infinite;
+        }
+        
+        @keyframes livePulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        
+        /* Keyboard shortcuts help overlay */
+        .shortcuts-help {
+            position: fixed;
+            top: 80px;
+            left: 30px;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            z-index: 9999;
+            min-width: 300px;
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        .shortcuts-content h5 {
+            margin-bottom: 15px;
+            color: #fff;
+            border-bottom: 1px solid #333;
+            padding-bottom: 10px;
+        }
+        
+        .shortcuts-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .shortcut-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+        }
+        
+        .shortcut-item kbd {
+            background: #333;
+            color: #fff;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-left: 5px;
+        }
+        
+        .shortcut-item span {
+            flex: 1;
+            text-align: right;
+            padding-right: 10px;
         }
     </style>
     

@@ -1,6 +1,36 @@
 {% extends "base.html" %}
 
 {% block content %}
+<!-- Live Indicator -->
+<div class="live-indicator">
+    <span>مباشر</span>
+</div>
+
+<!-- Keyboard Shortcuts Help -->
+<div id="shortcutsHelp" class="shortcuts-help" style="display: none;">
+    <div class="shortcuts-content">
+        <h5><i class="fas fa-keyboard me-2"></i>اختصارات لوحة المفاتيح</h5>
+        <div class="shortcuts-list">
+            <div class="shortcut-item">
+                <kbd>F11</kbd> أو <kbd>Ctrl+F</kbd>
+                <span>شاشة كاملة</span>
+            </div>
+            <div class="shortcut-item">
+                <kbd>F5</kbd> أو <kbd>Ctrl+R</kbd>
+                <span>تحديث البيانات</span>
+            </div>
+            <div class="shortcut-item">
+                <kbd>Esc</kbd>
+                <span>خروج من الشاشة الكاملة</span>
+            </div>
+            <div class="shortcut-item">
+                <kbd>?</kbd>
+                <span>عرض/إخفاء المساعدة</span>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div id="loading" class="loading" style="display: none;">
     <div class="spinner-border" role="status">
         <span class="visually-hidden">جاري التحميل...</span>
@@ -16,9 +46,9 @@
             {{ grade_name }}
         </div>
         
-        <div class="row">
+        <div class="row g-3">
             {% for class_info in classes %}
-            <div class="col-lg-6 col-xl-4 mb-4">
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 mb-3">
                 <div class="class-card" data-class="{{ class_info.name }}">
                     <div class="class-header" style="background: {{ class_info.color }};">
                         <h3 class="class-name">{{ class_info.name }}</h3>
@@ -68,6 +98,10 @@
 
 <!-- Floating Action Buttons -->
 <div class="floating-buttons">
+    <button class="btn floating-btn" onclick="toggleFullscreen()" id="fullscreenBtn">
+        <i class="fas fa-expand me-2"></i>
+        شاشة كاملة
+    </button>
     <a href="{{ url_for('qr_code') }}" class="btn floating-btn">
         <i class="fas fa-qrcode me-2"></i>
         عرض رمز QR
@@ -300,17 +334,44 @@
         }
     }
     
+    // Store previous student counts for comparison
+    let previousCounts = {};
+    
     // Update class cards with new data
     function updateClassCards(grades) {
+        let newRegistrations = [];
+        
         Object.keys(grades).forEach(gradeName => {
             grades[gradeName].forEach(classInfo => {
                 const studentsContainer = document.getElementById(`students-${classInfo.name}`);
                 const countElement = document.querySelector(`[data-class="${classInfo.name}"] .count`);
                 
+                // Check if this is a new registration
+                const previousCount = previousCounts[classInfo.name] || 0;
+                if (classInfo.count > previousCount) {
+                    newRegistrations.push({
+                        className: classInfo.name,
+                        newCount: classInfo.count,
+                        previousCount: previousCount
+                    });
+                    
+                    // Add visual highlight to the card
+                    const card = document.querySelector(`[data-class="${classInfo.name}"]`);
+                    if (card) {
+                        card.style.animation = 'pulse 2s ease-in-out';
+                        setTimeout(() => {
+                            card.style.animation = '';
+                        }, 2000);
+                    }
+                }
+                
+                // Update the previous count
+                previousCounts[classInfo.name] = classInfo.count;
+                
                 if (studentsContainer) {
                     if (classInfo.students && classInfo.students.length > 0) {
-                        studentsContainer.innerHTML = classInfo.students.map(student => `
-                            <div class="student-item">
+                        studentsContainer.innerHTML = classInfo.students.map((student, index) => `
+                            <div class="student-item ${index === classInfo.students.length - 1 && classInfo.count > previousCount ? 'new-student' : ''}">
                                 <i class="fas fa-user me-2"></i>
                                 ${student}
                             </div>
@@ -330,10 +391,154 @@
                 }
             });
         });
+        
+        // Show notifications for new registrations
+        if (newRegistrations.length > 0) {
+            newRegistrations.forEach(reg => {
+                showNewRegistrationNotification(reg.className, reg.newCount);
+            });
+            
+            // Play notification sound (if available)
+            playNotificationSound();
+        }
     }
     
-    // Auto refresh every 30 seconds
-    setInterval(refreshData, 30000);
+    // Show notification for new registration
+    function showNewRegistrationNotification(className, count) {
+        const notification = document.createElement('div');
+        notification.className = 'new-registration-notification';
+        notification.innerHTML = `
+            <div class="notification-content">
+                <i class="fas fa-user-plus text-success me-2"></i>
+                <strong>تسجيل جديد!</strong><br>
+                <span>${className}</span><br>
+                <small>إجمالي الطلاب: ${count}</small>
+            </div>
+        `;
+        
+        document.body.appendChild(notification);
+        
+        // Remove notification after 5 seconds
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.remove();
+            }
+        }, 5000);
+    }
+    
+    // Play notification sound
+    function playNotificationSound() {
+        try {
+            // Create a simple beep sound
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+            oscillator.frequency.setValueAtTime(600, audioContext.currentTime + 0.1);
+            
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.2);
+        } catch (e) {
+            // Fallback: no sound if not supported
+            console.log('Audio notification not supported');
+        }
+    }
+    
+    // Auto refresh every 5 seconds for real-time updates
+    setInterval(refreshData, 5000);
+    
+    // Listen for visibility changes to refresh when tab becomes active
+    document.addEventListener('visibilitychange', function() {
+        if (!document.hidden) {
+            refreshData();
+        }
+    });
+    
+    // Initialize previous counts on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize counts from current page data
+        {% for grade_name, classes in grades.items() %}
+            {% for class_info in classes %}
+                previousCounts['{{ class_info.name }}'] = {{ class_info.count }};
+            {% endfor %}
+        {% endfor %}
+    });
+    
+    // Fullscreen functionality
+    function toggleFullscreen() {
+        const elem = document.documentElement;
+        const btn = document.getElementById('fullscreenBtn');
+        
+        if (!document.fullscreenElement) {
+            elem.requestFullscreen().then(() => {
+                btn.innerHTML = '<i class="fas fa-compress me-2"></i>خروج من الشاشة الكاملة';
+            }).catch(err => {
+                console.log('Error enabling fullscreen:', err);
+            });
+        } else {
+            document.exitFullscreen().then(() => {
+                btn.innerHTML = '<i class="fas fa-expand me-2"></i>شاشة كاملة';
+            }).catch(err => {
+                console.log('Error exiting fullscreen:', err);
+            });
+        }
+    }
+    
+    // Listen for fullscreen changes
+    document.addEventListener('fullscreenchange', function() {
+        const btn = document.getElementById('fullscreenBtn');
+        if (document.fullscreenElement) {
+            btn.innerHTML = '<i class="fas fa-compress me-2"></i>خروج من الشاشة الكاملة';
+        } else {
+            btn.innerHTML = '<i class="fas fa-expand me-2"></i>شاشة كاملة';
+        }
+    });
+    
+    // Keyboard shortcuts for big screen operation
+    document.addEventListener('keydown', function(e) {
+        // F11 or Ctrl+F for fullscreen
+        if (e.key === 'F11' || (e.ctrlKey && e.key === 'f')) {
+            e.preventDefault();
+            toggleFullscreen();
+        }
+        
+        // F5 or Ctrl+R for refresh
+        if (e.key === 'F5' || (e.ctrlKey && e.key === 'r')) {
+            e.preventDefault();
+            refreshData();
+        }
+        
+        // Escape to exit fullscreen
+        if (e.key === 'Escape' && document.fullscreenElement) {
+            document.exitFullscreen();
+        }
+        
+        // ? to toggle shortcuts help
+        if (e.key === '?' || (e.shiftKey && e.key === '/')) {
+            e.preventDefault();
+            toggleShortcutsHelp();
+        }
+    });
+    
+    // Toggle shortcuts help
+    function toggleShortcutsHelp() {
+        const help = document.getElementById('shortcutsHelp');
+        if (help.style.display === 'none' || !help.style.display) {
+            help.style.display = 'block';
+            setTimeout(() => {
+                help.style.display = 'none';
+            }, 5000); // Auto-hide after 5 seconds
+        } else {
+            help.style.display = 'none';
+        }
+    }
     
     // Focus on name input when add modal opens
     document.getElementById('addStudentModal').addEventListener('shown.bs.modal', function() {

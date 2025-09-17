@@ -1,8 +1,9 @@
 from flask import Flask, render_template, request, jsonify, redirect, url_for, flash, send_file
 import io
 import base64
+import os
 from database import Database
-from utils import reshape_arabic_text, generate_qr_code, CLASSES, COLORS, GRADE_COLORS
+from utils import reshape_arabic_text, generate_qr_code, get_registration_url, CLASSES, COLORS, GRADE_COLORS
 import json
 
 app = Flask(__name__)
@@ -57,6 +58,11 @@ def add_student():
     success = db.add_student(class_name, student_name)
     
     if success:
+        # Log the registration for monitoring
+        import datetime
+        timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        print(f"[{timestamp}] New registration: {student_name} in {class_name}")
+        
         return jsonify({'success': True, 'message': 'تمت إضافة الطالب بنجاح'})
     else:
         return jsonify({'success': False, 'message': 'الطالب موجود بالفعل'})
