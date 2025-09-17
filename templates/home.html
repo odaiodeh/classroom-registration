@@ -1,0 +1,343 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div id="loading" class="loading" style="display: none;">
+    <div class="spinner-border" role="status">
+        <span class="visually-hidden">جاري التحميل...</span>
+    </div>
+    <p class="mt-2">جاري تحديث البيانات...</p>
+</div>
+
+<div id="grades-container">
+    {% for grade_name, classes in grades.items() %}
+    <div class="grade-section">
+        <div class="grade-title grade-{{ grade_name.split()[1] if grade_name.split()|length > 1 else grade_name[-1] }}">
+            <i class="fas fa-graduation-cap me-2"></i>
+            {{ grade_name }}
+        </div>
+        
+        <div class="row">
+            {% for class_info in classes %}
+            <div class="col-lg-6 col-xl-4 mb-4">
+                <div class="class-card" data-class="{{ class_info.name }}">
+                    <div class="class-header" style="background: {{ class_info.color }};">
+                        <h3 class="class-name">{{ class_info.name }}</h3>
+                        <div class="student-count">
+                            <i class="fas fa-users me-1"></i>
+                            عدد الطلاب: <span class="count">{{ class_info.count }}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="class-body">
+                        <div class="students-list" id="students-{{ class_info.name }}">
+                            {% if class_info.students %}
+                                {% for student in class_info.students %}
+                                <div class="student-item">
+                                    <i class="fas fa-user me-2"></i>
+                                    {{ student }}
+                                </div>
+                                {% endfor %}
+                            {% else %}
+                                <div class="no-students">
+                                    <i class="fas fa-user-slash me-2"></i>
+                                    لا يوجد طلاب مسجلين بعد
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="action-buttons">
+                            <button class="btn btn-add btn-custom flex-fill me-2" 
+                                    onclick="showAddStudentModal('{{ class_info.name }}')">
+                                <i class="fas fa-plus me-1"></i>
+                                إضافة طالب
+                            </button>
+                            <button class="btn btn-remove btn-custom flex-fill" 
+                                    onclick="showRemoveStudentModal('{{ class_info.name }}')">
+                                <i class="fas fa-trash me-1"></i>
+                                حذف طالب
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Floating Action Buttons -->
+<div class="floating-buttons">
+    <a href="{{ url_for('qr_code') }}" class="btn floating-btn">
+        <i class="fas fa-qrcode me-2"></i>
+        عرض رمز QR
+    </a>
+    <button class="btn floating-btn" onclick="refreshData()">
+        <i class="fas fa-sync-alt me-2"></i>
+        تحديث البيانات
+    </button>
+</div>
+
+<!-- Add Student Modal -->
+<div class="modal fade" id="addStudentModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-user-plus me-2"></i>
+                    إضافة طالب جديد
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addStudentForm">
+                    <div class="mb-3">
+                        <label for="addStudentName" class="form-label">اسم الطالب</label>
+                        <input type="text" class="form-control" id="addStudentName" 
+                               placeholder="أدخل اسم الطالب الكامل" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="addStudentClass" class="form-label">الصف</label>
+                        <input type="text" class="form-control" id="addStudentClass" readonly>
+                    </div>
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <button type="button" class="btn btn-secondary me-md-2" data-bs-dismiss="modal">
+                            إلغاء
+                        </button>
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-plus me-1"></i>
+                            إضافة الطالب
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Remove Student Modal -->
+<div class="modal fade" id="removeStudentModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-user-minus me-2"></i>
+                    حذف طالب
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="removeStudentForm">
+                    <div class="mb-3">
+                        <label for="removeStudentSelect" class="form-label">اختر الطالب</label>
+                        <select class="form-select" id="removeStudentSelect" required>
+                            <option value="">اختر طالباً للحذف</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="removeStudentClass" class="form-label">الصف</label>
+                        <input type="text" class="form-control" id="removeStudentClass" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="removePassword" class="form-label">كلمة المرور</label>
+                        <input type="password" class="form-control" id="removePassword" 
+                               placeholder="أدخل كلمة المرور للحذف" required>
+                        <div class="form-text">كلمة المرور مطلوبة لحذف الطلاب</div>
+                    </div>
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <button type="button" class="btn btn-secondary me-md-2" data-bs-dismiss="modal">
+                            إلغاء
+                        </button>
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-trash me-1"></i>
+                            حذف الطالب
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let currentClass = '';
+    
+    function showAddStudentModal(className) {
+        currentClass = className;
+        document.getElementById('addStudentClass').value = className;
+        document.getElementById('addStudentName').value = '';
+        new bootstrap.Modal(document.getElementById('addStudentModal')).show();
+    }
+    
+    async function showRemoveStudentModal(className) {
+        currentClass = className;
+        document.getElementById('removeStudentClass').value = className;
+        document.getElementById('removePassword').value = '';
+        
+        // Load students for this class
+        try {
+            const response = await fetch(`/get_students/${encodeURIComponent(className)}`);
+            const data = await response.json();
+            
+            const select = document.getElementById('removeStudentSelect');
+            select.innerHTML = '<option value="">اختر طالباً للحذف</option>';
+            
+            if (data.success && data.students.length > 0) {
+                data.students.forEach(student => {
+                    const option = document.createElement('option');
+                    option.value = student;
+                    option.textContent = student;
+                    select.appendChild(option);
+                });
+            } else {
+                select.innerHTML = '<option value="">لا يوجد طلاب في هذا الصف</option>';
+            }
+        } catch (error) {
+            showAlert('خطأ في تحميل قائمة الطلاب', 'danger');
+        }
+        
+        new bootstrap.Modal(document.getElementById('removeStudentModal')).show();
+    }
+    
+    // Add student form submission
+    document.getElementById('addStudentForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const studentName = document.getElementById('addStudentName').value.trim();
+        const className = document.getElementById('addStudentClass').value;
+        
+        if (!studentName) {
+            showAlert('الرجاء إدخال اسم الطالب', 'warning');
+            return;
+        }
+        
+        try {
+            const response = await fetch('/add_student', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    name: studentName,
+                    class: className
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                showAlert(data.message, 'success');
+                bootstrap.Modal.getInstance(document.getElementById('addStudentModal')).hide();
+                refreshData();
+            } else {
+                showAlert(data.message, 'warning');
+            }
+        } catch (error) {
+            showAlert('حدث خطأ. الرجاء المحاولة مرة أخرى', 'danger');
+        }
+    });
+    
+    // Remove student form submission
+    document.getElementById('removeStudentForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const studentName = document.getElementById('removeStudentSelect').value;
+        const className = document.getElementById('removeStudentClass').value;
+        const password = document.getElementById('removePassword').value;
+        
+        if (!studentName || !password) {
+            showAlert('الرجاء اختيار طالب وإدخال كلمة المرور', 'warning');
+            return;
+        }
+        
+        try {
+            const response = await fetch('/remove_student', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    name: studentName,
+                    class: className,
+                    password: password
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                showAlert(data.message, 'success');
+                bootstrap.Modal.getInstance(document.getElementById('removeStudentModal')).hide();
+                refreshData();
+            } else {
+                showAlert(data.message, 'danger');
+            }
+        } catch (error) {
+            showAlert('حدث خطأ. الرجاء المحاولة مرة أخرى', 'danger');
+        }
+    });
+    
+    // Refresh data function
+    async function refreshData() {
+        showLoading(true);
+        
+        try {
+            const response = await fetch('/api/refresh');
+            const data = await response.json();
+            
+            if (data.success) {
+                updateClassCards(data.grades);
+                showAlert('تم تحديث البيانات بنجاح', 'success');
+            } else {
+                showAlert('فشل في تحديث البيانات', 'danger');
+            }
+        } catch (error) {
+            showAlert('خطأ في الاتصال بالخادم', 'danger');
+        } finally {
+            showLoading(false);
+        }
+    }
+    
+    // Update class cards with new data
+    function updateClassCards(grades) {
+        Object.keys(grades).forEach(gradeName => {
+            grades[gradeName].forEach(classInfo => {
+                const studentsContainer = document.getElementById(`students-${classInfo.name}`);
+                const countElement = document.querySelector(`[data-class="${classInfo.name}"] .count`);
+                
+                if (studentsContainer) {
+                    if (classInfo.students && classInfo.students.length > 0) {
+                        studentsContainer.innerHTML = classInfo.students.map(student => `
+                            <div class="student-item">
+                                <i class="fas fa-user me-2"></i>
+                                ${student}
+                            </div>
+                        `).join('');
+                    } else {
+                        studentsContainer.innerHTML = `
+                            <div class="no-students">
+                                <i class="fas fa-user-slash me-2"></i>
+                                لا يوجد طلاب مسجلين بعد
+                            </div>
+                        `;
+                    }
+                }
+                
+                if (countElement) {
+                    countElement.textContent = classInfo.count;
+                }
+            });
+        });
+    }
+    
+    // Auto refresh every 30 seconds
+    setInterval(refreshData, 30000);
+    
+    // Focus on name input when add modal opens
+    document.getElementById('addStudentModal').addEventListener('shown.bs.modal', function() {
+        document.getElementById('addStudentName').focus();
+    });
+</script>
+{% endblock %}

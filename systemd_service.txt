@@ -1,0 +1,48 @@
+# ملف خدمة systemd للخادم
+# Systemd service file for the server
+
+# احفظ هذا في: /etc/systemd/system/school-app.service
+# Save this as: /etc/systemd/system/school-app.service
+
+[Unit]
+Description=School Registration Web Application - المدرسة الجماهيرية بئر الأمير
+After=network.target
+After=systemd-user-sessions.service
+After=network-online.target
+
+[Service]
+Type=simple
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/home/ubuntu/school-app
+Environment=PATH=/home/ubuntu/school-app/venv/bin
+Environment=PYTHONPATH=/home/ubuntu/school-app
+Environment=PUBLIC_URL=http://YOUR_EC2_PUBLIC_IP:5002
+ExecStart=/home/ubuntu/school-app/venv/bin/python /home/ubuntu/school-app/app.py
+ExecReload=/bin/kill -HUP $MAINPID
+KillMode=mixed
+TimeoutStopSec=5
+PrivateTmp=true
+Restart=always
+RestartSec=10
+
+# أمان إضافي
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/home/ubuntu/school-app
+
+# تسجيل الأخطاء
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=school-app
+
+[Install]
+WantedBy=multi-user.target
+
+# تعليمات التثبيت:
+# 1. sudo cp systemd_service.txt /etc/systemd/system/school-app.service
+# 2. sudo systemctl daemon-reload
+# 3. sudo systemctl enable school-app
+# 4. sudo systemctl start school-app
+# 5. sudo systemctl status school-app

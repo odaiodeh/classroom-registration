@@ -1,0 +1,358 @@
+{% extends "base.html" %}
+
+{% block title %}رمز QR للتسجيل - المدرسة الجماهيرية بئر الأمير{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8 col-xl-6">
+        <div class="card border-0 shadow-lg">
+            <div class="card-header bg-info text-white text-center py-4">
+                <h2 class="mb-0">
+                    <i class="fas fa-qrcode me-2"></i>
+                    رمز QR للتسجيل
+                </h2>
+                <p class="mb-0 mt-2 opacity-75">امسح الرمز للوصول السريع لصفحة التسجيل</p>
+            </div>
+            
+            <div class="card-body text-center p-5">
+                <!-- QR Code Display -->
+                <div class="qr-container mb-4">
+                    <div class="qr-wrapper">
+                        <img src="data:image/png;base64,{{ qr_image }}" 
+                             alt="QR Code للتسجيل" 
+                             class="qr-code-image">
+                    </div>
+                </div>
+                
+                <!-- Instructions -->
+                <div class="instructions mb-4">
+                    <h4 class="text-primary mb-3">
+                        <i class="fas fa-mobile-alt me-2"></i>
+                        كيفية الاستخدام
+                    </h4>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <div class="instruction-step">
+                                <div class="step-number">1</div>
+                                <div class="step-icon">
+                                    <i class="fas fa-camera"></i>
+                                </div>
+                                <p class="step-text">افتح كاميرا الهاتف أو تطبيق QR</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="instruction-step">
+                                <div class="step-number">2</div>
+                                <div class="step-icon">
+                                    <i class="fas fa-search"></i>
+                                </div>
+                                <p class="step-text">وجه الكاميرا نحو الرمز</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="instruction-step">
+                                <div class="step-number">3</div>
+                                <div class="step-icon">
+                                    <i class="fas fa-external-link-alt"></i>
+                                </div>
+                                <p class="step-text">اضغط على الرابط للتسجيل</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- URL Display -->
+                <div class="url-section mb-4">
+                    <h5 class="text-secondary mb-2">رابط التسجيل المباشر:</h5>
+                    <div class="url-container">
+                        <input type="text" 
+                               class="form-control text-center" 
+                               value="{{ registration_url }}" 
+                               id="urlInput" 
+                               readonly>
+                        <button class="btn btn-outline-primary btn-sm mt-2" 
+                                onclick="copyToClipboard()">
+                            <i class="fas fa-copy me-1"></i>
+                            نسخ الرابط
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <a href="/" class="btn btn-primary btn-lg me-3">
+                        <i class="fas fa-home me-2"></i>
+                        العودة للرئيسية
+                    </a>
+                    <a href="{{ registration_url }}" target="_blank" class="btn btn-success btn-lg">
+                        <i class="fas fa-external-link-alt me-2"></i>
+                        فتح صفحة التسجيل
+                    </a>
+                </div>
+            </div>
+            
+            <div class="card-footer bg-light text-center py-3">
+                <small class="text-muted">
+                    <i class="fas fa-shield-alt me-1"></i>
+                    الرمز آمن ويؤدي مباشرة لصفحة التسجيل الرسمية
+                </small>
+            </div>
+        </div>
+        
+        <!-- Tips Card -->
+        <div class="card border-0 shadow-sm mt-4">
+            <div class="card-body">
+                <h5 class="card-title text-info">
+                    <i class="fas fa-lightbulb me-2"></i>
+                    نصائح مفيدة
+                </h5>
+                <ul class="list-unstyled mb-0">
+                    <li class="mb-2">
+                        <i class="fas fa-check text-success me-2"></i>
+                        يمكن مشاركة هذا الرمز مع أولياء الأمور عبر WhatsApp أو البريد الإلكتروني
+                    </li>
+                    <li class="mb-2">
+                        <i class="fas fa-check text-success me-2"></i>
+                        الرمز يعمل على جميع الأجهزة الذكية (آيفون، أندرويد، أيباد)
+                    </li>
+                    <li class="mb-2">
+                        <i class="fas fa-check text-success me-2"></i>
+                        يمكن طباعة الرمز ووضعه في أماكن مرئية في المدرسة
+                    </li>
+                    <li class="mb-0">
+                        <i class="fas fa-check text-success me-2"></i>
+                        التسجيل عبر الرمز متاح 24/7 من أي مكان
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .qr-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+    }
+    
+    .qr-wrapper {
+        background: white;
+        padding: 20px;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        border: 3px solid var(--info-color);
+    }
+    
+    .qr-code-image {
+        max-width: 100%;
+        height: auto;
+        border-radius: 10px;
+    }
+    
+    .instruction-step {
+        text-align: center;
+        padding: 20px 10px;
+        position: relative;
+    }
+    
+    .step-number {
+        position: absolute;
+        top: -10px;
+        right: 50%;
+        transform: translateX(50%);
+        background: var(--info-color);
+        color: white;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 14px;
+    }
+    
+    .step-icon {
+        font-size: 2rem;
+        color: var(--info-color);
+        margin: 20px 0 15px 0;
+    }
+    
+    .step-text {
+        font-size: 14px;
+        color: var(--text-primary);
+        margin: 0;
+        font-weight: 500;
+    }
+    
+    .url-container {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 15px;
+        border: 2px dashed var(--info-color);
+    }
+    
+    .url-container input {
+        background: white;
+        border: 2px solid #e0e0e0;
+        font-family: 'Courier New', monospace;
+        font-size: 14px;
+    }
+    
+    .action-buttons {
+        margin-top: 30px;
+    }
+    
+    .btn-lg {
+        padding: 12px 30px;
+        font-size: 16px;
+        border-radius: 12px;
+    }
+    
+    @media (max-width: 768px) {
+        .qr-wrapper {
+            padding: 15px;
+        }
+        
+        .instruction-step {
+            padding: 15px 5px;
+        }
+        
+        .step-icon {
+            font-size: 1.5rem;
+        }
+        
+        .action-buttons .btn-lg {
+            display: block;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        
+        .url-container input {
+            font-size: 12px;
+        }
+    }
+    
+    .fade-in-scale {
+        animation: fadeInScale 0.6s ease-out;
+    }
+    
+    @keyframes fadeInScale {
+        from {
+            opacity: 0;
+            transform: scale(0.8);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+    
+    .qr-wrapper {
+        animation: fadeInScale 0.6s ease-out;
+    }
+    
+    .instruction-step {
+        animation: fadeIn 0.8s ease-out;
+        animation-fill-mode: both;
+    }
+    
+    .instruction-step:nth-child(1) { animation-delay: 0.2s; }
+    .instruction-step:nth-child(2) { animation-delay: 0.4s; }
+    .instruction-step:nth-child(3) { animation-delay: 0.6s; }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function copyToClipboard() {
+        const urlInput = document.getElementById('urlInput');
+        urlInput.select();
+        urlInput.setSelectionRange(0, 99999); // For mobile devices
+        
+        try {
+            document.execCommand('copy');
+            showAlert('تم نسخ الرابط بنجاح!', 'success');
+            
+            // Change button text temporarily
+            const button = event.target;
+            const originalText = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-check me-1"></i>تم النسخ';
+            button.classList.add('btn-success');
+            button.classList.remove('btn-outline-primary');
+            
+            setTimeout(() => {
+                button.innerHTML = originalText;
+                button.classList.remove('btn-success');
+                button.classList.add('btn-outline-primary');
+            }, 2000);
+            
+        } catch (err) {
+            showAlert('فشل في نسخ الرابط. الرجاء نسخه يدوياً', 'warning');
+        }
+    }
+    
+    // Add click event to URL input for easy selection
+    document.getElementById('urlInput').addEventListener('click', function() {
+        this.select();
+    });
+    
+    // Print functionality
+    function printQRCode() {
+        const printWindow = window.open('', '_blank');
+        const qrImage = document.querySelector('.qr-code-image').src;
+        const url = document.getElementById('urlInput').value;
+        
+        printWindow.document.write(`
+            <html>
+                <head>
+                    <title>رمز QR للتسجيل - المدرسة الجماهيرية بئر الأمير</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
+                        .header { margin-bottom: 30px; }
+                        .qr-code { margin: 20px 0; }
+                        .url { font-family: monospace; font-size: 14px; margin-top: 20px; }
+                        .instructions { margin-top: 30px; text-align: right; }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h1>المدرسة الجماهيرية بئر الأمير - الناصرة</h1>
+                        <h2>رمز QR للتسجيل</h2>
+                    </div>
+                    <div class="qr-code">
+                        <img src="${qrImage}" alt="QR Code" style="max-width: 300px;">
+                    </div>
+                    <div class="url">
+                        <strong>الرابط المباشر:</strong><br>
+                        ${url}
+                    </div>
+                    <div class="instructions">
+                        <h3>تعليمات الاستخدام:</h3>
+                        <ol>
+                            <li>افتح كاميرا الهاتف أو تطبيق قارئ QR</li>
+                            <li>وجه الكاميرا نحو الرمز</li>
+                            <li>اضغط على الرابط الذي يظهر للوصول لصفحة التسجيل</li>
+                        </ol>
+                    </div>
+                </body>
+            </html>
+        `);
+        
+        printWindow.document.close();
+        printWindow.focus();
+        printWindow.print();
+        printWindow.close();
+    }
+    
+    // Add print button if needed
+    document.addEventListener('DOMContentLoaded', function() {
+        // You can add a print button here if needed
+        console.log('QR Code page loaded successfully');
+    });
+</script>
+{% endblock %}

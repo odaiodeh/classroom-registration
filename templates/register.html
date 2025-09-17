@@ -1,0 +1,258 @@
+{% extends "base.html" %}
+
+{% block title %}تسجيل طالب - المدرسة الجماهيرية بئر الأمير{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8 col-xl-6">
+        <div class="card border-0 shadow-lg">
+            <div class="card-header bg-primary text-white text-center py-4">
+                <h2 class="mb-0">
+                    <i class="fas fa-user-plus me-2"></i>
+                    تسجيل طالب جديد
+                </h2>
+                <p class="mb-0 mt-2 opacity-75">املأ النموذج أدناه لتسجيل الطالب</p>
+            </div>
+            
+            <div class="card-body p-5">
+                <form id="registrationForm" method="POST">
+                    <div class="mb-4">
+                        <label for="studentName" class="form-label fw-bold">
+                            <i class="fas fa-user me-2 text-primary"></i>
+                            اسم الطالب الكامل
+                        </label>
+                        <input type="text" 
+                               class="form-control form-control-lg" 
+                               id="studentName" 
+                               name="name"
+                               placeholder="أدخل اسم الطالب الثلاثي أو الرباعي" 
+                               required
+                               autocomplete="name">
+                        <div class="form-text">الرجاء إدخال الاسم كاملاً كما هو في الوثائق الرسمية</div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="studentClass" class="form-label fw-bold">
+                            <i class="fas fa-school me-2 text-primary"></i>
+                            الصف الدراسي
+                        </label>
+                        <select class="form-select form-select-lg" 
+                                id="studentClass" 
+                                name="class" 
+                                required>
+                            <option value="">اختر الصف الدراسي</option>
+                            {% for class_name in classes %}
+                            <option value="{{ class_name }}">{{ class_name }}</option>
+                            {% endfor %}
+                        </select>
+                        <div class="form-text">اختر الصف الذي ينتمي إليه الطالب</div>
+                    </div>
+                    
+                    <div class="d-grid gap-3">
+                        <button type="submit" 
+                                class="btn btn-primary btn-lg fw-bold py-3" 
+                                id="submitBtn">
+                            <i class="fas fa-check me-2"></i>
+                            تسجيل الطالب
+                        </button>
+                        
+                        <a href="/" class="btn btn-outline-secondary btn-lg">
+                            <i class="fas fa-arrow-right me-2"></i>
+                            العودة للصفحة الرئيسية
+                        </a>
+                    </div>
+                </form>
+                
+                <!-- Loading indicator -->
+                <div id="loadingIndicator" class="text-center mt-4" style="display: none;">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">جاري التسجيل...</span>
+                    </div>
+                    <p class="mt-2 text-muted">جاري تسجيل الطالب، يرجى الانتظار...</p>
+                </div>
+                
+                <!-- Success message -->
+                <div id="successMessage" class="alert alert-success mt-4" style="display: none;">
+                    <i class="fas fa-check-circle me-2"></i>
+                    <strong>تم التسجيل بنجاح!</strong>
+                    <p class="mb-0 mt-2">تم تسجيل الطالب في النظام بنجاح. يمكنك تسجيل طالب آخر أو العودة للصفحة الرئيسية.</p>
+                </div>
+            </div>
+            
+            <div class="card-footer bg-light text-center py-3">
+                <small class="text-muted">
+                    <i class="fas fa-info-circle me-1"></i>
+                    في حالة وجود مشكلة في التسجيل، يرجى مراجعة إدارة المدرسة
+                </small>
+            </div>
+        </div>
+        
+        <!-- Instructions Card -->
+        <div class="card border-0 shadow-sm mt-4">
+            <div class="card-body">
+                <h5 class="card-title text-primary">
+                    <i class="fas fa-lightbulb me-2"></i>
+                    تعليمات التسجيل
+                </h5>
+                <ul class="list-unstyled mb-0">
+                    <li class="mb-2">
+                        <i class="fas fa-check text-success me-2"></i>
+                        تأكد من كتابة اسم الطالب كاملاً وبشكل صحيح
+                    </li>
+                    <li class="mb-2">
+                        <i class="fas fa-check text-success me-2"></i>
+                        اختر الصف الصحيح من القائمة المنسدلة
+                    </li>
+                    <li class="mb-2">
+                        <i class="fas fa-check text-success me-2"></i>
+                        في حالة التسجيل المسبق، ستظهر رسالة تنبيه
+                    </li>
+                    <li class="mb-0">
+                        <i class="fas fa-check text-success me-2"></i>
+                        يمكن تسجيل أكثر من طالب باستخدام نفس النموذج
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .card {
+        border-radius: 20px;
+        overflow: hidden;
+    }
+    
+    .card-header {
+        border-bottom: none;
+    }
+    
+    .form-control:focus,
+    .form-select:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.25rem rgba(46, 134, 171, 0.15);
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        border: none;
+    }
+    
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #1e5f8e, #8b2c5a);
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(46, 134, 171, 0.3);
+    }
+    
+    .alert-success {
+        background: linear-gradient(135deg, #d4edda, #c3e6cb);
+        border: none;
+        border-radius: 15px;
+    }
+    
+    .list-unstyled li {
+        padding: 5px 0;
+    }
+    
+    @media (max-width: 768px) {
+        .card-body {
+            padding: 2rem 1.5rem !important;
+        }
+        
+        .btn-lg {
+            padding: 12px 20px;
+            font-size: 1rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.getElementById('registrationForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const submitBtn = document.getElementById('submitBtn');
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        const successMessage = document.getElementById('successMessage');
+        const form = this;
+        
+        // Get form data
+        const formData = new FormData(form);
+        const studentName = formData.get('name').trim();
+        const studentClass = formData.get('class');
+        
+        // Validate
+        if (!studentName || !studentClass) {
+            showAlert('الرجاء ملء جميع الحقول المطلوبة', 'warning');
+            return;
+        }
+        
+        // Show loading state
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>جاري التسجيل...';
+        loadingIndicator.style.display = 'block';
+        successMessage.style.display = 'none';
+        
+        try {
+            const response = await fetch('/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    name: studentName,
+                    class: studentClass
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                // Show success
+                successMessage.style.display = 'block';
+                form.reset();
+                
+                // Scroll to success message
+                successMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                
+                // Show success alert
+                showAlert(data.message, 'success');
+                
+                // Focus back to name field for next registration
+                setTimeout(() => {
+                    document.getElementById('studentName').focus();
+                }, 1000);
+                
+            } else {
+                showAlert(data.message, data.message.includes('موجود') ? 'warning' : 'danger');
+            }
+            
+        } catch (error) {
+            console.error('Registration error:', error);
+            showAlert('حدث خطأ في الاتصال. الرجاء المحاولة مرة أخرى', 'danger');
+        } finally {
+            // Reset button state
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-check me-2"></i>تسجيل الطالب';
+            loadingIndicator.style.display = 'none';
+        }
+    });
+    
+    // Auto-focus on name field when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('studentName').focus();
+    });
+    
+    // Clear success message when form is modified
+    document.getElementById('studentName').addEventListener('input', function() {
+        document.getElementById('successMessage').style.display = 'none';
+    });
+    
+    document.getElementById('studentClass').addEventListener('change', function() {
+        document.getElementById('successMessage').style.display = 'none';
+    });
+</script>
+{% endblock %}
