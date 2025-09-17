@@ -36,14 +36,18 @@ pip install -r requirements.txt
 # إنشاء مجلد logs إذا لم يكن موجود
 mkdir -p logs
 
+# تحديد المنفذ (Port)
+PORT=${1:-5002}
+
 # بدء التطبيق
 echo "🌟 بدء تشغيل التطبيق..."
-echo "📱 الرابط: ${PUBLIC_URL:-http://localhost:5002}"
-echo "📱 QR Code: ${PUBLIC_URL:-http://localhost:5002}/qr_code"
+echo "🔌 المنفذ: $PORT"
+echo "📱 الرابط: ${PUBLIC_URL:-http://localhost:$PORT}"
+echo "📱 QR Code: ${PUBLIC_URL:-http://localhost:$PORT}/qr_code"
 echo ""
 echo "اضغط Ctrl+C لإيقاف الخادم"
 echo "Press Ctrl+C to stop the server"
 echo ""
 
 # تشغيل التطبيق مع تسجيل الأخطاء
-python app.py 2>&1 | tee logs/app.log
+python app.py --port $PORT 2>&1 | tee logs/app.log

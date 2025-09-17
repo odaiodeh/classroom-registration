@@ -185,5 +185,43 @@ def refresh_data():
     return jsonify({'success': True, 'grades': grades})
 
 if __name__ == '__main__':
+    import argparse
+    import sys
+    
+    # Parse command line arguments
+    parser = argparse.ArgumentParser(description='School Registration Web Application')
+    parser.add_argument('--port', '-p', type=int, default=5002, 
+                       help='Port number to run the server on (default: 5002)')
+    parser.add_argument('--host', type=str, default='0.0.0.0',
+                       help='Host to bind to (default: 0.0.0.0)')
+    parser.add_argument('--debug', action='store_true', default=True,
+                       help='Enable debug mode (default: True)')
+    parser.add_argument('--no-debug', action='store_true',
+                       help='Disable debug mode')
+    
+    args = parser.parse_args()
+    
+    # Handle debug mode
+    debug_mode = args.debug and not args.no_debug
+    
+    # Print startup information
+    print(f"🚀 Starting School Registration Server...")
+    print(f"📍 Host: {args.host}")
+    print(f"🔌 Port: {args.port}")
+    print(f"🐛 Debug: {debug_mode}")
+    print(f"🌐 Local URL: http://localhost:{args.port}")
+    print(f"🌐 Network URL: http://{args.host}:{args.port}")
+    print(f"📱 QR Code: http://localhost:{args.port}/qr_code")
+    print(f"📝 Registration: http://localhost:{args.port}/register")
+    print("="*50)
+    
     # Enable debug mode and set host to allow external access
-    app.run(debug=True, host='0.0.0.0', port=5002, threaded=True)
+    try:
+        app.run(debug=debug_mode, host=args.host, port=args.port, threaded=True)
+    except OSError as e:
+        if "Address already in use" in str(e):
+            print(f"❌ Error: Port {args.port} is already in use!")
+            print(f"💡 Try a different port: python app.py --port {args.port + 1}")
+            sys.exit(1)
+        else:
+            raise e
