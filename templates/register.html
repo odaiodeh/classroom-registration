@@ -6,12 +6,12 @@
 <div class="row justify-content-center">
     <div class="col-lg-8 col-xl-6">
         <div class="card border-0 shadow-lg">
-            <div class="card-header bg-primary text-white text-center py-4">
+            <div class="card-header text-white text-center py-4" style="background: linear-gradient(135deg, #2c3e50, #3498db);">
                 <h2 class="mb-0">
                     <i class="fas fa-user-plus me-2"></i>
-                    تسجيل طالب جديد
+                    {{ school_settings.texts.registration_welcome if school_settings and school_settings.texts else "تسجيل طالب جديد" }}
                 </h2>
-                <p class="mb-0 mt-2 opacity-75">املأ النموذج أدناه لتسجيل الطالب</p>
+                <p class="mb-0 mt-2 opacity-75">{{ school_settings.texts.registration_instructions if school_settings and school_settings.texts else "املأ النموذج أدناه لتسجيل الطالب" }}</p>
             </div>
             
             <div class="card-body p-5">
@@ -19,22 +19,22 @@
                     <div class="mb-4">
                         <label for="studentName" class="form-label fw-bold">
                             <i class="fas fa-user me-2 text-primary"></i>
-                            اسم الطالب الكامل
+                            {{ school_settings.texts.student_name_label if school_settings and school_settings.texts else "اسم الطالب الكامل" }}
                         </label>
                         <input type="text" 
                                class="form-control form-control-lg" 
                                id="studentName" 
                                name="name"
-                               placeholder="أدخل اسم الطالب الثلاثي أو الرباعي" 
+                               placeholder="{{ school_settings.texts.student_name_placeholder if school_settings and school_settings.texts else 'اسم الطالب' }}" 
                                required
                                autocomplete="name">
-                        <div class="form-text">الرجاء إدخال الاسم كاملاً كما هو في الوثائق الرسمية</div>
+                        <div class="form-text">{{ school_settings.texts.registration_form_instruction if school_settings and school_settings.texts else "الرجاء إدخال الاسم كاملاً" }}</div>
                     </div>
                     
                     <div class="mb-4">
                         <label for="studentClass" class="form-label fw-bold">
                             <i class="fas fa-school me-2 text-primary"></i>
-                            الصف الدراسي
+                            {{ school_settings.texts.class_name_label if school_settings and school_settings.texts else "الصف الدراسي" }}
                         </label>
                         <select class="form-select form-select-lg" 
                                 id="studentClass" 
@@ -53,7 +53,7 @@
                                 class="btn btn-primary btn-lg fw-bold py-3" 
                                 id="submitBtn">
                             <i class="fas fa-check me-2"></i>
-                            تسجيل الطالب
+                            {{ school_settings.texts.register_button if school_settings and school_settings.texts else "تسجيل الطالب" }}
                         </button>
                         
                         <a href="/" class="btn btn-outline-secondary btn-lg">
@@ -131,19 +131,19 @@
     
     .form-control:focus,
     .form-select:focus {
-        border-color: var(--primary-color);
-        box-shadow: 0 0 0 0.25rem rgba(46, 134, 171, 0.15);
+        border-color: #3498db;
+        box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.15);
     }
     
     .btn-primary {
-        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        background: linear-gradient(135deg, #2c3e50, #3498db);
         border: none;
     }
     
     .btn-primary:hover {
-        background: linear-gradient(135deg, #1e5f8e, #8b2c5a);
+        background: linear-gradient(135deg, #1a252f, #2980b9);
         transform: translateY(-2px);
-        box-shadow: 0 10px 25px rgba(46, 134, 171, 0.3);
+        box-shadow: 0 10px 25px rgba(52, 152, 219, 0.3);
     }
     
     .alert-success {
@@ -220,6 +220,10 @@
                 
                 // Show success alert
                 showAlert(data.message, 'success');
+                
+                // TRIGGER IMMEDIATE HOME PAGE REFRESH
+                // Signal to home page that new student was added
+                localStorage.setItem('newStudentAdded', Date.now().toString());
                 
                 // Add celebration effect
                 document.body.style.backgroundColor = '#4CAF50';

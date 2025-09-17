@@ -1,0 +1,130 @@
+{
+  "grades": {
+    "طبقة الروابع": {
+      "name": "طبقة الروابع",
+      "color": "linear-gradient(135deg, #3498db 0%, #2980b9 100%)",
+      "classes": [
+        {
+          "name": "الرابع \"أ\"",
+          "code": "4-a",
+          "type": "section"
+        },
+        {
+          "name": "الرابع \"ب\"",
+          "code": "4-b",
+          "type": "section"
+        },
+        {
+          "name": "الرابع \"ج\"",
+          "code": "4-c",
+          "type": "section"
+        },
+        {
+          "name": "الرابع \"د\"",
+          "code": "4-d",
+          "type": "section"
+        },
+        {
+          "name": "الرابع \"هـ\"",
+          "code": "4-e",
+          "type": "section"
+        }
+      ]
+    },
+    "طبقة الخوامس": {
+      "name": "طبقة الخوامس",
+      "color": "linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%)",
+      "classes": [
+        {
+          "name": "الخامس \"أ\"",
+          "code": "5-a",
+          "type": "section"
+        },
+        {
+          "name": "الخامس \"ب\"",
+          "code": "5-b",
+          "type": "section"
+        },
+        {
+          "name": "الخامس \"ج\"",
+          "code": "5-c",
+          "type": "section"
+        },
+        {
+          "name": "الخامس \"د\"",
+          "code": "5-d",
+          "type": "section"
+        }
+      ]
+    },
+    "طبقة السوادس": {
+      "name": "طبقة السوادس",
+      "color": "linear-gradient(135deg, #27ae60 0%, #2ecc71 100%)",
+      "classes": [
+        {
+          "name": "السادس \"أ\"",
+          "code": "6-a",
+          "type": "section"
+        },
+        {
+          "name": "السادس \"ب\"",
+          "code": "6-b",
+          "type": "section"
+        },
+        {
+          "name": "السادس \"ج\"",
+          "code": "6-c",
+          "type": "section"
+        },
+        {
+          "name": "السادس \"د\"",
+          "code": "6-d",
+          "type": "section"
+        },
+        {
+          "name": "السادس \"هـ\"",
+          "code": "6-e",
+          "type": "section"
+        }
+      ]
+    }
+  },
+  "settings": {
+    "school_name": "المدرسة الجماهيرية بئر الأمير - الناصرة",
+    "event_title": "اجتماع أهالي طلاب الصفوف الثالثة وحتى السادسة",
+    "default_password": "admin123",
+    "texts": {
+      "registration_welcome": "أهلاً وسهلاً بكم في تسجيل الحضور",
+      "registration_instructions": "يرجى إدخال اسم الطالب واختيار الصف",
+      "registration_form_instruction": "الرجاء إدخال الاسم كاملاً",
+      "student_name_placeholder": "اسم الطالب",
+      "student_name_label": "اسم الطالب",
+      "class_name_label": "الصف",
+      "register_button": "تسجيل الحضور",
+      "qr_code_title": "رمز QR للتسجيل",
+      "qr_code_instructions": "امسح هذا الرمز للوصول إلى صفحة التسجيل",
+      "management_title": "إدارة الطلاب",
+      "add_student": "إضافة طالب جديد",
+      "remove_student": "حذف طالب",
+      "refresh_data": "تحديث البيانات",
+      "class_selection": "اختيار الصف",
+      "student_list": "قائمة الطلاب",
+      "no_students": "لا يوجد طلاب في هذا الصف",
+      "password_required": "كلمة المرور مطلوبة لحذف الطلاب",
+      "total_students": "إجمالي الطلاب المسجلين",
+      "students_count": "طالب",
+      "success_messages": {
+        "student_added": "تم إضافة الطالب بنجاح",
+        "student_removed": "تم حذف الطالب بنجاح",
+        "registration_success": "تم التسجيل بنجاح"
+      },
+      "error_messages": {
+        "invalid_class": "الصف غير صحيح",
+        "missing_data": "الرجاء إدخال جميع البيانات المطلوبة",
+        "wrong_password": "كلمة المرور غير صحيحة",
+        "student_exists": "الطالب مسجل بالفعل",
+        "connection_error": "خطأ في الاتصال بالخادم"
+      }
+    }
+  }
+}

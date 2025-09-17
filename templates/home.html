@@ -1,9 +1,27 @@
 {% extends "base.html" %}
 
 {% block content %}
-<!-- Live Indicator -->
-<div class="live-indicator">
-    <span>مباشر</span>
+<!-- Live Status Panel -->
+<div class="live-status-panel">
+    <!-- Live Indicator -->
+    <div class="live-indicator">
+        <span>مباشر</span>
+        <small id="lastRefresh" style="display:block; font-size:10px; opacity:0.7;">آخر تحديث: --:--:--</small>
+    </div>
+    
+    <!-- Overall Student Count -->
+    <div class="overall-counter">
+        <div class="counter-content">
+            <i class="fas fa-users"></i>
+            <div class="counter-text-group">
+                <span class="counter-label">{{ school_settings.texts.total_students if school_settings and school_settings.texts else "إجمالي الطلاب" }}</span>
+                <div class="counter-numbers">
+                    <span class="counter-number" id="totalStudentsCount">{{ total_students or 0 }}</span>
+                    <span class="counter-unit">{{ school_settings.texts.students_count if school_settings and school_settings.texts else "طالب" }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Keyboard Shortcuts Help -->
@@ -38,6 +56,51 @@
     <p class="mt-2">جاري تحديث البيانات...</p>
 </div>
 
+<!-- Revolutionary Floating Settings Menu -->
+<div class="floating-settings" id="floatingSettings">
+    <button class="settings-trigger" onclick="toggleSettingsMenu()" title="الإعدادات">
+        <i class="fas fa-cog"></i>
+    </button>
+    
+    <div class="settings-menu" id="settingsMenu">
+        <div class="settings-item" onclick="openStudentPanelFromSettings()" title="إدارة الطلاب">
+            <i class="fas fa-users-cog"></i>
+            <span>إدارة الطلاب</span>
+        </div>
+        
+        <div class="settings-item" onclick="openRegistrationFromSettings()" title="التسجيل">
+            <i class="fas fa-user-plus"></i>
+            <span>التسجيل</span>
+        </div>
+        
+        <div class="settings-item" onclick="manualRefresh()" title="تحديث يدوي">
+            <i class="fas fa-sync"></i>
+            <span>تحديث يدوي</span>
+        </div>
+        
+        <div class="settings-item" onclick="openQRCodeFromSettings()" title="عرض رمز QR">
+            <i class="fas fa-qrcode"></i>
+            <span>رمز QR</span>
+        </div>
+        
+        <div class="settings-item" onclick="refreshDataFromSettings()" title="تحديث البيانات">
+            <i class="fas fa-sync-alt"></i>
+            <span>تحديث</span>
+        </div>
+        
+        <div class="settings-item" onclick="toggleFullscreenFromSettings()" title="شاشة كاملة">
+            <i class="fas fa-expand"></i>
+            <span>شاشة كاملة</span>
+        </div>
+        
+        <div class="settings-item" onclick="exportDataFromSettings()" title="تصدير البيانات">
+            <i class="fas fa-download"></i>
+            <span>تصدير</span>
+        </div>
+        
+    </div>
+</div>
+
 <div id="grades-container">
     {% for grade_name, classes in grades.items() %}
     <div class="grade-section">
@@ -46,48 +109,65 @@
             {{ grade_name }}
         </div>
         
-        <div class="row g-3">
+        <div class="ultra-grid">
             {% for class_info in classes %}
-            <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 mb-3">
-                <div class="class-card" data-class="{{ class_info.name }}">
-                    <div class="class-header" style="background: {{ class_info.color }};">
-                        <h3 class="class-name">{{ class_info.name }}</h3>
-                        <div class="student-count">
-                            <i class="fas fa-users me-1"></i>
-                            عدد الطلاب: <span class="count">{{ class_info.count }}</span>
+            <div class="ultra-class-card" data-class="{{ class_info.name }}">
+                <div class="class-header-ultra">
+                    <div class="class-gradient-bg" style="background: {{ class_info.color }};"></div>
+                    <div class="class-info">
+                        <h3 class="class-name-ultra">{{ class_info.name }}</h3>
+                        <div class="student-counter">
+                            <div class="counter-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="counter-text">
+                                <span class="count-number">{{ class_info.count }}</span>
+                                <span class="count-label">طالب</span>
+                            </div>
                         </div>
+                    </div>
+                    <div class="class-actions">
+                        <button class="quick-action" onclick="quickAddStudent('{{ class_info.name }}')" title="إضافة سريعة">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                        <button class="quick-action" onclick="viewClassDetails('{{ class_info.name }}')" title="عرض التفاصيل">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="students-container">
+                    <div class="students-grid" id="students-{{ class_info.name }}">
+                        {% if class_info.students %}
+                            {% for student in class_info.students %}
+                            <div class="student-card" data-index="{{ loop.index }}">
+                                <div class="student-avatar">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div class="student-info">
+                                    <span class="student-name">{{ student }}</span>
+                                    <span class="student-number">#{{ loop.index }}</span>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="empty-class">
+                                <div class="empty-icon">
+                                    <i class="fas fa-user-slash"></i>
+                                </div>
+                                <p class="empty-text">لا يوجد طلاب</p>
+                            </div>
+                        {% endif %}
                     </div>
                     
-                    <div class="class-body">
-                        <div class="students-list" id="students-{{ class_info.name }}">
-                            {% if class_info.students %}
-                                {% for student in class_info.students %}
-                                <div class="student-item">
-                                    <i class="fas fa-user me-2"></i>
-                                    {{ student }}
-                                </div>
-                                {% endfor %}
-                            {% else %}
-                                <div class="no-students">
-                                    <i class="fas fa-user-slash me-2"></i>
-                                    لا يوجد طلاب مسجلين بعد
-                                </div>
-                            {% endif %}
-                        </div>
-                        
-                        <div class="action-buttons">
-                            <button class="btn btn-add btn-custom flex-fill me-2" 
-                                    onclick="showAddStudentModal('{{ class_info.name }}')">
-                                <i class="fas fa-plus me-1"></i>
-                                إضافة طالب
-                            </button>
-                            <button class="btn btn-remove btn-custom flex-fill" 
-                                    onclick="showRemoveStudentModal('{{ class_info.name }}')">
-                                <i class="fas fa-trash me-1"></i>
-                                حذف طالب
-                            </button>
-                        </div>
+                    {% if class_info.count > 30 %}
+                    <div class="students-overflow">
+                        <button class="show-more-btn" onclick="showAllStudents('{{ class_info.name }}')">
+                            <i class="fas fa-chevron-down"></i>
+                            عرض المزيد ({{ class_info.count - 30 }})
+                        </button>
                     </div>
+                    {% endif %}
                 </div>
             </div>
             {% endfor %}
@@ -98,96 +178,136 @@
 
 <!-- Floating Action Buttons -->
 <div class="floating-buttons">
+    <button class="btn floating-btn" onclick="openStudentModal()" id="manageStudentsBtn">
+        <i class="fas fa-users-cog"></i>
+        إدارة الطلاب
+    </button>
     <button class="btn floating-btn" onclick="toggleFullscreen()" id="fullscreenBtn">
-        <i class="fas fa-expand me-2"></i>
+        <i class="fas fa-expand"></i>
         شاشة كاملة
     </button>
     <a href="{{ url_for('qr_code') }}" class="btn floating-btn">
-        <i class="fas fa-qrcode me-2"></i>
+        <i class="fas fa-qrcode"></i>
         عرض رمز QR
     </a>
     <button class="btn floating-btn" onclick="refreshData()">
-        <i class="fas fa-sync-alt me-2"></i>
+        <i class="fas fa-sync-alt"></i>
         تحديث البيانات
     </button>
 </div>
 
-<!-- Add Student Modal -->
-<div class="modal fade" id="addStudentModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">
-                    <i class="fas fa-user-plus me-2"></i>
-                    إضافة طالب جديد
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+<!-- Sliding Student Management Panel -->
+<div class="student-management-panel" id="studentManagementPanel">
+    <!-- Panel Overlay -->
+    <div class="panel-overlay" onclick="closeStudentPanel()"></div>
+    
+    <!-- Panel Content -->
+    <div class="panel-content">
+        <!-- Panel Header -->
+        <div class="panel-header">
+            <div class="panel-title">
+                <i class="fas fa-users-cog me-3"></i>
+                <span>{{ school_settings.texts.management_title if school_settings and school_settings.texts else "إدارة الطلاب" }}</span>
             </div>
-            <div class="modal-body">
-                <form id="addStudentForm">
-                    <div class="mb-3">
-                        <label for="addStudentName" class="form-label">اسم الطالب</label>
-                        <input type="text" class="form-control" id="addStudentName" 
-                               placeholder="أدخل اسم الطالب الكامل" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="addStudentClass" class="form-label">الصف</label>
-                        <input type="text" class="form-control" id="addStudentClass" readonly>
-                    </div>
-                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                        <button type="button" class="btn btn-secondary me-md-2" data-bs-dismiss="modal">
-                            إلغاء
-                        </button>
-                        <button type="submit" class="btn btn-success">
-                            <i class="fas fa-plus me-1"></i>
-                            إضافة الطالب
-                        </button>
-                    </div>
-                </form>
-            </div>
+            <button class="panel-close-btn" onclick="closeStudentPanel()">
+                <i class="fas fa-times"></i>
+            </button>
         </div>
-    </div>
-</div>
 
-<!-- Remove Student Modal -->
-<div class="modal fade" id="removeStudentModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">
-                    <i class="fas fa-user-minus me-2"></i>
-                    حذف طالب
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        <!-- Panel Body -->
+        <div class="panel-body">
+            <!-- Class Selection -->
+            <div class="management-section">
+                <div class="section-header">
+                    <i class="fas fa-school me-2"></i>
+                    <span>{{ school_settings.texts.class_selection if school_settings and school_settings.texts else "اختيار الصف" }}</span>
+                    <button class="refresh-btn" onclick="refreshPanelData()" title="تحديث">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
+                <div class="section-content">
+                    <select class="panel-select" id="panelClassSelect" onchange="loadClassForPanel()">
+                        <option value="">اختر الصف لإدارة الطلاب</option>
+                        <!-- Classes will be loaded dynamically via API -->
+                    </select>
+                </div>
             </div>
-            <div class="modal-body">
-                <form id="removeStudentForm">
-                    <div class="mb-3">
-                        <label for="removeStudentSelect" class="form-label">اختر الطالب</label>
-                        <select class="form-select" id="removeStudentSelect" required>
-                            <option value="">اختر طالباً للحذف</option>
-                        </select>
+
+            <!-- Clear All Students Section - Always Visible -->
+            <div class="management-section" id="clearAllStudentsSection" style="border: 3px solid #e74c3c; box-shadow: 0 0 20px rgba(231, 76, 60, 0.3);">
+                <div class="section-header" style="background: rgba(231, 76, 60, 0.15); border-bottom: 1px solid #e74c3c;">
+                    <i class="fas fa-exclamation-triangle me-2 text-danger"></i>
+                    <span style="color: #e74c3c; font-weight: bold;">⚠️ مسح جميع الطلاب ⚠️</span>
+                </div>
+                <div class="section-content">
+                    <div class="alert alert-warning d-flex align-items-center mb-3">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <span><strong>تحذير:</strong> هذا الإجراء سيحذف جميع الطلاب من جميع الصفوف ولا يمكن التراجع عنه!</span>
                     </div>
-                    <div class="mb-3">
-                        <label for="removeStudentClass" class="form-label">الصف</label>
-                        <input type="text" class="form-control" id="removeStudentClass" readonly>
-                    </div>
-                    <div class="mb-3">
-                        <label for="removePassword" class="form-label">كلمة المرور</label>
-                        <input type="password" class="form-control" id="removePassword" 
-                               placeholder="أدخل كلمة المرور للحذف" required>
-                        <div class="form-text">كلمة المرور مطلوبة لحذف الطلاب</div>
-                    </div>
-                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                        <button type="button" class="btn btn-secondary me-md-2" data-bs-dismiss="modal">
-                            إلغاء
-                        </button>
-                        <button type="submit" class="btn btn-danger">
-                            <i class="fas fa-trash me-1"></i>
-                            حذف الطالب
+                    
+                    <div class="clear-all-form">
+                        <input type="password" class="panel-input" id="clearAllPassword" 
+                               placeholder="أدخل كلمة المرور لتأكيد المسح" required>
+                        <button type="button" class="panel-btn" onclick="clearAllStudents()" 
+                                style="background: linear-gradient(135deg, #c0392b 0%, #e74c3c 100%); border-color: #c0392b;">
+                            <i class="fas fa-trash-alt me-2"></i>
+                            مسح جميع الطلاب نهائياً
                         </button>
                     </div>
-                </form>
+                </div>
+            </div>
+
+            <!-- Management Content -->
+            <div id="panelManagementContent" style="display: none;">
+                <!-- Add Student Section -->
+                <div class="management-section">
+                    <div class="section-header">
+                        <i class="fas fa-user-plus me-2 text-success"></i>
+                        <span>{{ school_settings.texts.add_student if school_settings and school_settings.texts else "إضافة طالب جديد" }}</span>
+                    </div>
+                    <div class="section-content">
+                        <div class="add-student-form">
+                            <input type="text" class="panel-input" id="panelStudentName" 
+                                   placeholder="أدخل اسم الطالب" required>
+                            <button type="button" class="panel-btn panel-btn-success" onclick="addStudentToPanel()">
+                                <i class="fas fa-plus me-2"></i>
+                                إضافة للصف: <span id="panelSelectedClass">غير محدد</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Remove Student Section -->
+                <div class="management-section">
+                    <div class="section-header">
+                        <i class="fas fa-user-minus me-2 text-danger"></i>
+                        <span>{{ school_settings.texts.remove_student if school_settings and school_settings.texts else "حذف طالب" }}</span>
+                    </div>
+                    <div class="section-content">
+                        <div class="remove-password-form">
+                            <input type="password" class="panel-input" id="panelRemovePassword" 
+                                   placeholder="أدخل كلمة المرور للحذف" required>
+                            <small class="text-muted">كلمة المرور مطلوبة لحذف أي طالب</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Students List -->
+                <div class="management-section">
+                    <div class="section-header">
+                        <i class="fas fa-users me-2"></i>
+                        <span>{{ school_settings.texts.student_list if school_settings and school_settings.texts else "قائمة الطلاب" }}</span>
+                        <span class="students-count" id="panelStudentsCount">0 طالب</span>
+                    </div>
+                    <div class="section-content">
+                        <div id="panelStudentsList" class="students-panel-list">
+                            <div class="empty-state">
+                                <i class="fas fa-arrow-up fa-2x mb-3"></i>
+                                <p>اختر صف من الأعلى لعرض الطلاب</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -196,54 +316,669 @@
 
 {% block extra_js %}
 <script>
+    // Basic JavaScript initialization
+</script>
+<script>
     let currentClass = '';
+    let selectedStudent = '';
+    let allClasses = [];
     
-    function showAddStudentModal(className) {
-        currentClass = className;
-        document.getElementById('addStudentClass').value = className;
-        document.getElementById('addStudentName').value = '';
-        new bootstrap.Modal(document.getElementById('addStudentModal')).show();
+    // Notification system
+    function showNotification(message, type = 'info') {
+        // Remove existing notifications
+        const existingNotifications = document.querySelectorAll('.notification-toast');
+        existingNotifications.forEach(n => n.remove());
+        
+        // Create notification element
+        const notification = document.createElement('div');
+        notification.className = `notification-toast alert alert-${type === 'success' ? 'success' : type === 'error' ? 'danger' : 'info'} alert-dismissible fade show`;
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+            min-width: 300px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            border-radius: 12px;
+            animation: slideInRight 0.3s ease-out;
+        `;
+        
+        const icon = type === 'success' ? 'fas fa-check-circle' : 
+                    type === 'error' ? 'fas fa-exclamation-triangle' : 
+                    'fas fa-info-circle';
+        
+        notification.innerHTML = `
+            <div class="d-flex align-items-center">
+                <i class="${icon} me-2"></i>
+                <span>${message}</span>
+                <button type="button" class="btn-close ms-auto" onclick="this.parentElement.parentElement.remove()"></button>
+            </div>
+        `;
+        
+        document.body.appendChild(notification);
+        
+        // Auto-remove after 4 seconds
+        setTimeout(() => {
+            if (notification.parentElement) {
+                notification.classList.add('fade-out');
+                setTimeout(() => notification.remove(), 300);
+            }
+        }, 4000);
     }
     
-    async function showRemoveStudentModal(className) {
-        currentClass = className;
-        document.getElementById('removeStudentClass').value = className;
-        document.getElementById('removePassword').value = '';
+    // Initialize classes data
+    {% for grade_name, classes in grades.items() %}
+        {% for class_info in classes %}
+            allClasses.push({
+                name: '{{ class_info.name }}',
+                color: '{{ class_info.color }}',
+                grade: '{{ grade_name.split()[1] if grade_name.split()|length > 1 else grade_name[-1] }}'
+            });
+        {% endfor %}
+    {% endfor %}
+    
+    // DEPRECATED - Replaced by refreshCounter()
+    // OLD updateOverallCount function removed for cleaner code
+    
+    // Animate counter with smooth transition
+    function animateCounter(element, start, end) {
+        const duration = 1000;
+        const range = end - start;
+        const increment = range / (duration / 16);
+        let current = start;
+        
+        const timer = setInterval(() => {
+            current += increment;
+            if ((increment > 0 && current >= end) || (increment < 0 && current <= end)) {
+                element.textContent = end;
+                clearInterval(timer);
+            } else {
+                element.textContent = Math.floor(current);
+            }
+        }, 16);
+    }
+    
+    // Load classes from API
+    async function loadClassesForPanel() {
+        try {
+            const response = await fetch('/api/classes');
+            const data = await response.json();
+            
+            if (data.success) {
+                const classSelect = document.getElementById('panelClassSelect');
+                
+                // Clear existing options except the first one
+                classSelect.innerHTML = '<option value="">اختر الصف لإدارة الطلاب</option>';
+                
+                // Add classes organized by grade
+                const grades = data.grades;
+                for (const [gradeName, gradeData] of Object.entries(grades)) {
+                    // Add grade as optgroup
+                    const optgroup = document.createElement('optgroup');
+                    optgroup.label = gradeName;
+                    
+                    gradeData.classes.forEach(classInfo => {
+                        const option = document.createElement('option');
+                        option.value = classInfo.name;
+                        option.textContent = classInfo.name;
+                        optgroup.appendChild(option);
+                    });
+                    
+                    classSelect.appendChild(optgroup);
+                }
+                
+                console.log('Classes loaded successfully for panel');
+            } else {
+                console.error('Failed to load classes:', data.message);
+                alert('فشل في تحميل قائمة الصفوف');
+            }
+        } catch (error) {
+            console.error('Error loading classes:', error);
+            alert('خطأ في تحميل قائمة الصفوف');
+        }
+    }
+
+    // Open sliding student management panel
+    function openStudentPanel() {
+        console.log('Opening student management panel...');
+        
+        const panel = document.getElementById('studentManagementPanel');
+        if (!panel) {
+            alert('خطأ: لم يتم العثور على لوحة إدارة الطلاب');
+            return;
+        }
+        
+        // Reset panel state
+        resetPanelState();
+        
+        // Load classes
+        loadClassesForPanel();
+        
+        // Show panel with animation
+        panel.classList.add('active');
+        
+        // Add ESC key listener
+        document.addEventListener('keydown', escapePanelListener);
+        
+        console.log('Student panel opened successfully');
+    }
+    
+    // Close sliding panel
+    function closeStudentPanel() {
+        console.log('Closing student panel...');
+        
+        const panel = document.getElementById('studentManagementPanel');
+        if (panel) {
+            panel.classList.remove('active');
+        }
+        
+        // Remove ESC key listener
+        document.removeEventListener('keydown', escapePanelListener);
+        
+        console.log('Student panel closed');
+    }
+    
+    // ESC key listener for panel
+    function escapePanelListener(e) {
+        if (e.key === 'Escape') {
+            closeStudentPanel();
+        }
+    }
+    
+    // Reset panel to initial state
+    function resetPanelState() {
+        // Clear all inputs
+        const classSelect = document.getElementById('panelClassSelect');
+        const nameInput = document.getElementById('panelStudentName');
+        const passwordInput = document.getElementById('panelRemovePassword');
+        const selectedClass = document.getElementById('panelSelectedClass');
+        const studentsCount = document.getElementById('panelStudentsCount');
+        const studentsList = document.getElementById('panelStudentsList');
+        const managementContent = document.getElementById('panelManagementContent');
+        
+        if (classSelect) classSelect.value = '';
+        if (nameInput) nameInput.value = '';
+        if (passwordInput) passwordInput.value = '';
+        if (selectedClass) selectedClass.textContent = 'غير محدد';
+        if (studentsCount) studentsCount.textContent = '0 طالب';
+        if (managementContent) managementContent.style.display = 'none';
+        
+        if (studentsList) {
+            studentsList.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-arrow-up fa-2x mb-3"></i>
+                    <p>اختر صف من الأعلى لعرض الطلاب</p>
+                </div>
+            `;
+        }
+        
+        // Reset global variables
+        currentClass = '';
+        selectedStudent = '';
+    }
+    
+    // Load class for panel when selected
+    function loadClassForPanel() {
+        const classSelect = document.getElementById('panelClassSelect');
+        const selectedClass = classSelect.value;
+        
+        if (!selectedClass) {
+            document.getElementById('panelManagementContent').style.display = 'none';
+            resetPanelState();
+            return;
+        }
+        
+        currentClass = selectedClass;
+        document.getElementById('panelSelectedClass').textContent = selectedClass;
+        document.getElementById('panelManagementContent').style.display = 'block';
         
         // Load students for this class
+        loadStudentsForPanel();
+    }
+    
+    // Load students for the selected class in panel
+    function loadStudentsForPanel() {
+        if (!currentClass) return;
+        
+        const panelStudentsList = document.getElementById('panelStudentsList');
+        const studentsCount = document.getElementById('panelStudentsCount');
+        
+        // Show loading
+        panelStudentsList.innerHTML = `
+            <div class="empty-state">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">جاري التحميل...</span>
+                </div>
+                <p class="mt-3">جاري تحميل الطلاب...</p>
+            </div>
+        `;
+        
+        // Fetch students from server
+        fetch(`/get_students/${encodeURIComponent(currentClass)}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const students = data.students;
+                    studentsCount.textContent = `${students.length} طالب`;
+                    
+                    if (students.length === 0) {
+                        panelStudentsList.innerHTML = `
+                            <div class="empty-state">
+                                <i class="fas fa-user-plus fa-3x mb-3"></i>
+                                <h6>لا يوجد طلاب في هذا الصف</h6>
+                                <p>استخدم نموذج الإضافة لإضافة أول طالب</p>
+                            </div>
+                        `;
+                    } else {
+                        let studentsHtml = '';
+                        students.forEach((student, index) => {
+                            studentsHtml += `
+                                <div class="student-panel-card">
+                                    <div class="student-panel-info">
+                                        <h6>${student}</h6>
+                                        <small>#${index + 1}</small>
+                                    </div>
+                                    <button class="student-remove-btn" onclick="removeStudentFromPanel('${student}')" 
+                                            title="حذف الطالب">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            `;
+                        });
+                        panelStudentsList.innerHTML = studentsHtml;
+                    }
+                } else {
+                    panelStudentsList.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-exclamation-triangle fa-2x mb-3 text-danger"></i>
+                            <p>خطأ في تحميل الطلاب: ${data.message}</p>
+                        </div>
+                    `;
+                }
+            })
+            .catch(error => {
+                console.error('Error loading students:', error);
+                panelStudentsList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-exclamation-triangle fa-2x mb-3 text-danger"></i>
+                        <p>خطأ في الاتصال بالخادم</p>
+                    </div>
+                `;
+            });
+    }
+    
+    // Add student to panel class
+    function addStudentToPanel() {
+        const nameInput = document.getElementById('panelStudentName');
+        const studentName = nameInput.value.trim();
+        
+        if (!studentName) {
+            alert('يرجى إدخال اسم الطالب');
+            nameInput.focus();
+            return;
+        }
+        
+        if (!currentClass) {
+            alert('يرجى اختيار صف أولاً');
+            return;
+        }
+        
+        // Add student
+        fetch('/add_student', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                name: studentName,
+                class: currentClass
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Clear the input
+                nameInput.value = '';
+                // Reload students list
+                loadStudentsForPanel();
+                // Show success message
+                const successMsg = '{{ school_settings.texts.success_messages.student_added if school_settings and school_settings.texts and school_settings.texts.success_messages else "تم إضافة الطالب بنجاح" }}';
+                showNotification(successMsg, 'success');
+                
+                // Signal new student added (for consistency)
+                localStorage.setItem('newStudentAdded', Date.now().toString());
+                
+                // Immediate refresh with new system
+                refreshStudentsData();
+                refreshCounter();
+            } else {
+                alert(`خطأ: ${data.message}`);
+            }
+        })
+        .catch(error => {
+            console.error('Error adding student:', error);
+            alert('خطأ في إضافة الطالب');
+        });
+    }
+    
+    // Remove student from panel
+    function removeStudentFromPanel(studentName) {
+        const passwordInput = document.getElementById('panelRemovePassword');
+        const password = passwordInput.value.trim();
+        
+        if (!password) {
+            alert('يرجى إدخال كلمة المرور أولاً');
+            passwordInput.focus();
+            return;
+        }
+        
+        if (!confirm(`هل أنت متأكد من حذف الطالب: ${studentName}؟`)) {
+            return;
+        }
+        
+        // Remove student
+        fetch('/remove_student', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                name: studentName,
+                class: currentClass,
+                password: password
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Reload students list
+                loadStudentsForPanel();
+                // Show success message
+                const successMsg = '{{ school_settings.texts.success_messages.student_removed if school_settings and school_settings.texts and school_settings.texts.success_messages else "تم حذف الطالب بنجاح" }}';
+                showNotification(successMsg, 'success');
+                
+                // Signal new student added (for consistency)
+                localStorage.setItem('newStudentAdded', Date.now().toString());
+                
+                // Immediate refresh with new system
+                refreshStudentsData();
+                refreshCounter();
+            } else {
+                alert(`خطأ: ${data.message}`);
+            }
+        })
+        .catch(error => {
+            console.error('Error removing student:', error);
+            alert('خطأ في حذف الطالب');
+        });
+    }
+    
+    // Refresh panel data
+    function refreshPanelData() {
+        if (currentClass) {
+            loadStudentsForPanel();
+        }
+        showNotification('تم تحديث البيانات', 'info');
+    }
+
+    // Old function kept for compatibility
+    function closeStudentModal() {
+        closeStudentPanel();
+    }
+    
+    // Populate class selectors
+    function populateClassSelectors() {
+        const addSelector = document.getElementById('addClassSelector');
+        const removeSelector = document.getElementById('removeClassSelector');
+        
+        console.log('Populating class selectors, allClasses:', allClasses);
+        
+        if (!addSelector || !removeSelector) {
+            console.error('Class selectors not found in DOM');
+            return;
+        }
+        
+        addSelector.innerHTML = '';
+        removeSelector.innerHTML = '';
+        
+        if (allClasses.length === 0) {
+            console.warn('No classes available');
+            addSelector.innerHTML = '<div class="text-center text-muted p-3">لا توجد صفوف متاحة</div>';
+            removeSelector.innerHTML = '<div class="text-center text-muted p-3">لا توجد صفوف متاحة</div>';
+            return;
+        }
+        
+        allClasses.forEach((classInfo, index) => {
+            // Add selector
+            const addOption = document.createElement('div');
+            addOption.className = `class-option grade-${classInfo.grade}-option`;
+            addOption.textContent = classInfo.name;
+            addOption.onclick = () => selectClassForAdd(classInfo.name, addOption);
+            addSelector.appendChild(addOption);
+            
+            // Remove selector
+            const removeOption = document.createElement('div');
+            removeOption.className = `class-option grade-${classInfo.grade}-option`;
+            removeOption.textContent = classInfo.name;
+            removeOption.onclick = () => selectClassForRemove(classInfo.name, removeOption);
+            removeSelector.appendChild(removeOption);
+            
+            console.log(`Added class option ${index + 1}: ${classInfo.name}`);
+        });
+        
+        console.log('Class selectors populated successfully');
+    }
+    
+    // Show add student form
+    function showAddStudentForm() {
+        console.log('Showing add student form');
+        
+        hideAllForms();
+        const addSection = document.getElementById('addStudentSection');
+        if (addSection) {
+            addSection.style.display = 'block';
+            setTimeout(() => {
+                const nameInput = document.getElementById('addStudentName');
+                if (nameInput) {
+                    nameInput.focus();
+                }
+            }, 300);
+        }
+        
+        console.log('Add student form displayed');
+        return false;
+    }
+    
+    // Show remove student form
+    function showRemoveStudentForm() {
+        console.log('Showing remove student form');
+        
+        hideAllForms();
+        const removeSection = document.getElementById('removeStudentSection');
+        if (removeSection) {
+            removeSection.style.display = 'block';
+        }
+        
+        // Show empty message initially
+        const studentsGrid = document.getElementById('studentsGrid');
+        if (studentsGrid) {
+            studentsGrid.innerHTML = `
+                <div class="text-center p-4" style="color: var(--text-muted); grid-column: 1 / -1;">
+                    <i class="fas fa-hand-pointer fa-2x mb-3" style="opacity: 0.5;"></i>
+                    <h6>اختر صفاً أولاً</h6>
+                    <small>قم بالنقر على أحد الصفوف أعلاه لعرض الطلاب</small>
+                </div>
+            `;
+            studentsGrid.style.display = 'grid';
+        }
+        
+        console.log('Remove student form displayed');
+        return false;
+    }
+    
+    // Hide all forms
+    function hideAllForms() {
+        document.getElementById('addStudentSection').style.display = 'none';
+        document.getElementById('removeStudentSection').style.display = 'none';
+        document.getElementById('studentsGrid').style.display = 'none';
+        document.getElementById('passwordSection').style.display = 'none';
+        
+        // Clear selections
+        document.querySelectorAll('.class-option').forEach(option => {
+            option.classList.remove('selected');
+        });
+        document.querySelectorAll('.student-card').forEach(card => {
+            card.classList.remove('selected');
+        });
+        
+        currentClass = '';
+        selectedStudent = '';
+    }
+    
+    // Select class for adding student
+    function selectClassForAdd(className, element) {
+        document.querySelectorAll('#addClassSelector .class-option').forEach(option => {
+            option.classList.remove('selected');
+        });
+        element.classList.add('selected');
+        currentClass = className;
+    }
+    
+    // Select class for removing student
+    async function selectClassForRemove(className, element) {
+        console.log('Selecting class for removal:', className);
+        
+        document.querySelectorAll('#removeClassSelector .class-option').forEach(option => {
+            option.classList.remove('selected');
+        });
+        element.classList.add('selected');
+        currentClass = className;
+        
+        // Show loading state
+        const studentsGrid = document.getElementById('studentsGrid');
+        studentsGrid.innerHTML = `
+            <div class="text-center p-4" style="color: var(--text-muted); grid-column: 1 / -1;">
+                <div class="spinner-border spinner-border-sm mb-3" role="status"></div>
+                <h6>جاري تحميل الطلاب...</h6>
+            </div>
+        `;
+        studentsGrid.style.display = 'grid';
+        
+        await loadStudentsForRemoval(className);
+    }
+    
+    // Load students for removal
+    async function loadStudentsForRemoval(className) {
         try {
             const response = await fetch(`/get_students/${encodeURIComponent(className)}`);
             const data = await response.json();
             
-            const select = document.getElementById('removeStudentSelect');
-            select.innerHTML = '<option value="">اختر طالباً للحذف</option>';
+            const studentsGrid = document.getElementById('studentsGrid');
+            studentsGrid.innerHTML = '';
             
-            if (data.success && data.students.length > 0) {
+            if (data.success && data.students && data.students.length > 0) {
                 data.students.forEach(student => {
-                    const option = document.createElement('option');
-                    option.value = student;
-                    option.textContent = student;
-                    select.appendChild(option);
+                    const studentCard = document.createElement('div');
+                    studentCard.className = 'student-card';
+                    studentCard.innerHTML = `
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-user me-2"></i>
+                            <span>${student}</span>
+                        </div>
+                    `;
+                    studentCard.onclick = () => selectStudentForRemoval(student, studentCard);
+                    studentsGrid.appendChild(studentCard);
                 });
+                studentsGrid.style.display = 'grid';
             } else {
-                select.innerHTML = '<option value="">لا يوجد طلاب في هذا الصف</option>';
+                // Show empty state with nice styling
+                studentsGrid.innerHTML = `
+                    <div class="text-center p-4" style="color: var(--text-muted); grid-column: 1 / -1;">
+                        <i class="fas fa-user-slash fa-3x mb-3" style="opacity: 0.3;"></i>
+                        <h6>لا يوجد طلاب في هذا الصف</h6>
+                        <small>اختر صفاً آخر أو أضف طلاباً جدد أولاً</small>
+                    </div>
+                `;
+                studentsGrid.style.display = 'grid';
             }
+            
+            // Hide password section when switching classes
+            document.getElementById('passwordSection').style.display = 'none';
+            selectedStudent = '';
+            
         } catch (error) {
+            console.error('Error loading students:', error);
+            const studentsGrid = document.getElementById('studentsGrid');
+            studentsGrid.innerHTML = `
+                <div class="text-center p-4" style="color: var(--text-muted); grid-column: 1 / -1;">
+                    <i class="fas fa-exclamation-triangle fa-2x mb-3" style="color: #e74c3c;"></i>
+                    <h6>خطأ في تحميل الطلاب</h6>
+                    <small>الرجاء المحاولة مرة أخرى</small>
+                </div>
+            `;
+            studentsGrid.style.display = 'grid';
             showAlert('خطأ في تحميل قائمة الطلاب', 'danger');
         }
+    }
+    
+    // Select student for removal
+    function selectStudentForRemoval(studentName, element) {
+        document.querySelectorAll('.student-card').forEach(card => {
+            card.classList.remove('selected');
+        });
+        element.classList.add('selected');
+        selectedStudent = studentName;
         
-        new bootstrap.Modal(document.getElementById('removeStudentModal')).show();
+        document.getElementById('passwordSection').style.display = 'block';
+    }
+    
+    // Confirm remove student
+    async function confirmRemoveStudent() {
+        const password = document.getElementById('removePassword').value;
+        
+        if (!currentClass || !selectedStudent || !password) {
+            showAlert('الرجاء اختيار طالب وإدخال كلمة المرور', 'warning');
+            return;
+        }
+        
+        try {
+            const response = await fetch('/remove_student', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    name: selectedStudent,
+                    class: currentClass,
+                    password: password
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                showAlert(data.message, 'success');
+                closeStudentModal();
+                smoothRefreshData();
+            } else {
+                showAlert(data.message, 'danger');
+            }
+        } catch (error) {
+            showAlert('حدث خطأ. الرجاء المحاولة مرة أخرى', 'danger');
+        }
     }
     
     // Add student form submission
-    document.getElementById('addStudentForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
+    const addStudentForm = document.getElementById('addStudentForm');
+    if (addStudentForm) {
+        addStudentForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            e.stopPropagation();
         
         const studentName = document.getElementById('addStudentName').value.trim();
-        const className = document.getElementById('addStudentClass').value;
         
-        if (!studentName) {
-            showAlert('الرجاء إدخال اسم الطالب', 'warning');
+        if (!studentName || !currentClass) {
+            showAlert('الرجاء إدخال اسم الطالب واختيار الصف', 'warning');
             return;
         }
         
@@ -255,7 +990,7 @@
                 },
                 body: JSON.stringify({
                     name: studentName,
-                    class: className
+                    class: currentClass
                 })
             });
             
@@ -263,19 +998,22 @@
             
             if (data.success) {
                 showAlert(data.message, 'success');
-                bootstrap.Modal.getInstance(document.getElementById('addStudentModal')).hide();
-                refreshData();
+                closeStudentModal();
+                smoothRefreshData();
             } else {
                 showAlert(data.message, 'warning');
             }
         } catch (error) {
             showAlert('حدث خطأ. الرجاء المحاولة مرة أخرى', 'danger');
         }
-    });
+        });
+    }
     
     // Remove student form submission
-    document.getElementById('removeStudentForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
+    const removeStudentForm = document.getElementById('removeStudentForm');
+    if (removeStudentForm) {
+        removeStudentForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
         
         const studentName = document.getElementById('removeStudentSelect').value;
         const className = document.getElementById('removeStudentClass').value;
@@ -311,9 +1049,24 @@
         } catch (error) {
             showAlert('حدث خطأ. الرجاء المحاولة مرة أخرى', 'danger');
         }
-    });
+        });
+    }
     
-    // Refresh data function
+    // Ultra-smooth refresh function (invisible to user)
+    async function smoothRefreshData() {
+        try {
+            const response = await fetch('/api/refresh');
+            const data = await response.json();
+            
+            if (data.success) {
+                updateClassCardsSmooth(data.grades);
+            }
+        } catch (error) {
+            console.log('Silent refresh failed:', error);
+        }
+    }
+    
+    // Refresh data function (with visual feedback)
     async function refreshData() {
         showLoading(true);
         
@@ -337,14 +1090,96 @@
     // Store previous student counts for comparison
     let previousCounts = {};
     
-    // Update class cards with new data
+    // Ultra-smooth update (no visual disruption)
+    function updateClassCardsSmooth(grades) {
+        let newRegistrations = [];
+        
+        Object.keys(grades).forEach(gradeName => {
+            grades[gradeName].forEach(classInfo => {
+                // Escape class name for HTML (replace quotes with HTML entities)
+                const escapedClassName = classInfo.name.replace(/"/g, '&#34;');
+                const studentsContainer = document.getElementById(`students-${escapedClassName}`);
+                const countElement = document.querySelector(`[data-class="${escapedClassName}"] .count-number`);
+                
+                // Check if this is a new registration
+                const previousCount = previousCounts[classInfo.name] || 0;
+                if (classInfo.count > previousCount) {
+                    newRegistrations.push({
+                        className: classInfo.name,
+                        newCount: classInfo.count,
+                        previousCount: previousCount
+                    });
+                    
+                    // Subtle glow effect for new registration
+                    const card = document.querySelector(`[data-class="${escapedClassName}"]`);
+                    if (card) {
+                        card.style.animation = 'glow 3s ease-in-out';
+                        setTimeout(() => {
+                            card.style.animation = '';
+                        }, 3000);
+                    }
+                }
+                
+                // Update the previous count
+                previousCounts[classInfo.name] = classInfo.count;
+                
+                if (studentsContainer) {
+                    // Smooth transition for content update
+                    studentsContainer.style.opacity = '0.7';
+                    
+                    setTimeout(() => {
+                        if (classInfo.students && classInfo.students.length > 0) {
+                            studentsContainer.innerHTML = classInfo.students.map((student, index) => `
+                                <div class="student-item ${index === classInfo.students.length - 1 && classInfo.count > previousCount ? 'new-student' : ''}" 
+                                     style="animation: fadeIn 0.5s ease-out ${index * 0.1}s both;">
+                                    <i class="fas fa-user me-2"></i>
+                                    ${student}
+                                </div>
+                            `).join('');
+                        } else {
+                            studentsContainer.innerHTML = `
+                                <div class="no-students">
+                                    <i class="fas fa-user-slash"></i>
+                                    لا يوجد طلاب مسجلين بعد
+                                </div>
+                            `;
+                        }
+                        
+                        studentsContainer.style.opacity = '1';
+                    }, 150);
+                }
+                
+                if (countElement) {
+                    // Smooth number transition
+                    const currentCount = parseInt(countElement.textContent) || 0;
+                    if (currentCount !== classInfo.count) {
+                        animateNumber(countElement, currentCount, classInfo.count);
+                    }
+                }
+            });
+        });
+        
+        // Show subtle notifications for new registrations
+        if (newRegistrations.length > 0) {
+            newRegistrations.forEach(reg => {
+                showNewRegistrationNotification(reg.className, reg.newCount);
+            });
+            
+            // Soft notification sound
+            playNotificationSound();
+        }
+    }
+    
+    // Update class cards with new data (with visual feedback)
     function updateClassCards(grades) {
         let newRegistrations = [];
         
         Object.keys(grades).forEach(gradeName => {
             grades[gradeName].forEach(classInfo => {
-                const studentsContainer = document.getElementById(`students-${classInfo.name}`);
-                const countElement = document.querySelector(`[data-class="${classInfo.name}"] .count`);
+                // Escape class name for HTML (replace quotes with HTML entities)
+                const escapedClassName = classInfo.name.replace(/"/g, '&#34;');
+                const studentsContainer = document.getElementById(`students-${escapedClassName}`);
+                const countElement = document.querySelector(`[data-class="${escapedClassName}"] .count-number`);
                 
                 // Check if this is a new registration
                 const previousCount = previousCounts[classInfo.name] || 0;
@@ -356,7 +1191,7 @@
                     });
                     
                     // Add visual highlight to the card
-                    const card = document.querySelector(`[data-class="${classInfo.name}"]`);
+                    const card = document.querySelector(`[data-class="${escapedClassName}"]`);
                     if (card) {
                         card.style.animation = 'pulse 2s ease-in-out';
                         setTimeout(() => {
@@ -379,7 +1214,7 @@
                     } else {
                         studentsContainer.innerHTML = `
                             <div class="no-students">
-                                <i class="fas fa-user-slash me-2"></i>
+                                <i class="fas fa-user-slash"></i>
                                 لا يوجد طلاب مسجلين بعد
                             </div>
                         `;
@@ -401,6 +1236,28 @@
             // Play notification sound (if available)
             playNotificationSound();
         }
+    }
+    
+    // Animate number changes
+    function animateNumber(element, from, to) {
+        const duration = 800;
+        const steps = 20;
+        const stepDuration = duration / steps;
+        const increment = (to - from) / steps;
+        let current = from;
+        let step = 0;
+        
+        const timer = setInterval(() => {
+            step++;
+            current += increment;
+            
+            if (step >= steps) {
+                element.textContent = to;
+                clearInterval(timer);
+            } else {
+                element.textContent = Math.round(current);
+            }
+        }, stepDuration);
     }
     
     // Show notification for new registration
@@ -451,40 +1308,231 @@
         }
     }
     
-    // Auto refresh every 5 seconds for real-time updates
-    setInterval(refreshData, 5000);
+    // PROFESSIONAL DISPLAY UPDATE FUNCTIONS (DEFINED FIRST)
+    function updateDisplayFromData(categories) {
+        Object.keys(categories).forEach(categoryName => {
+            const category = categories[categoryName];
+            
+            category.classes.forEach(classData => {
+                // Update student list - try both escaped and unescaped versions
+                const escapedClassName = classData.name.replace(/"/g, '&#34;');
+                let studentsContainer = document.getElementById(`students-${escapedClassName}`);
+                if (!studentsContainer) {
+                    studentsContainer = document.getElementById(`students-${classData.name}`);
+                }
+                if (studentsContainer) {
+                    updateStudentsList(studentsContainer, classData.students, classData.name);
+                }
+                
+                // Update class count - try both escaped and CSS-escaped versions
+                let countElement = document.querySelector(`[data-class="${escapedClassName}"] .count-number`);
+                if (!countElement) {
+                    try {
+                        const cssEscapedName = classData.name.replace(/"/g, '\\"');
+                        countElement = document.querySelector(`[data-class="${cssEscapedName}"] .count-number`);
+                    } catch (error) {
+                        // Silently handle CSS selector errors
+                    }
+                }
+                if (countElement) {
+                    const currentCount = parseInt(countElement.textContent) || 0;
+                    if (currentCount !== classData.count) {
+                        animateNumber(countElement, currentCount, classData.count);
+                    }
+                }
+            });
+        });
+    }
     
-    // Listen for visibility changes to refresh when tab becomes active
+    function updateCounterDisplay(totalCount) {
+        const counterElement = document.getElementById('totalStudentsCount');
+        if (counterElement) {
+            const currentCount = parseInt(counterElement.textContent) || 0;
+            if (currentCount !== totalCount) {
+                animateCounter(counterElement, currentCount, totalCount);
+            }
+        }
+    }
+    
+    function updateStudentsList(container, students, className) {
+        const studentsToShow = students.slice(0, 30); // Limit display
+        
+        if (studentsToShow.length > 0) {
+            container.innerHTML = studentsToShow.map((student, index) => `
+                <div class="student-card" data-index="${index + 1}">
+                    <div class="student-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="student-info">
+                        <span class="student-name">${student}</span>
+                        <span class="student-number">#${index + 1}</span>
+                    </div>
+                </div>
+            `).join('');
+        } else {
+            container.innerHTML = `
+                <div class="empty-class">
+                    <div class="empty-icon">
+                        <i class="fas fa-user-slash"></i>
+                    </div>
+                    <p class="empty-text">لا يوجد طلاب</p>
+                </div>
+            `;
+        }
+    }
+
+    // CLEAN PROFESSIONAL REFRESH FUNCTIONS WITH ENHANCED ERROR HANDLING
+    async function refreshStudentsData() {
+        try {
+            const response = await fetch('/api/students-data');
+            
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                updateDisplayFromData(data.categories);
+                
+                // Update last refresh indicator
+                const now = new Date();
+                const refreshElement = document.getElementById('lastRefresh');
+                if (refreshElement) {
+                    refreshElement.textContent = 'آخر تحديث: ' + now.toLocaleTimeString();
+                }
+            }
+        } catch (error) {
+            // Silently handle errors to keep the system running
+        }
+    }
+    
+    async function refreshCounter() {
+        try {
+            const response = await fetch('/api/total-students');
+            
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                updateCounterDisplay(data.total);
+            }
+        } catch (error) {
+            // Silently handle errors to keep the system running
+        }
+    }
+
+    // PROFESSIONAL CLEAN REFRESH SYSTEM
+    let refreshInterval;
+    
+    function startLiveRefresh() {
+        // Initial load
+        refreshStudentsData();
+        refreshCounter();
+        
+        // Set up 3-second auto-refresh interval
+        refreshInterval = setInterval(() => {
+            refreshStudentsData();
+            refreshCounter();
+        }, 3000);
+    }
+    
+    function stopLiveRefresh() {
+        if (refreshInterval) {
+            clearInterval(refreshInterval);
+        }
+    }
+    
+    // CROSS-PAGE REGISTRATION DETECTION
+    function setupRegistrationListener() {
+        // Check for new registration signal every 500ms
+        setInterval(() => {
+            const newStudentSignal = localStorage.getItem('newStudentAdded');
+            if (newStudentSignal) {
+                const signalTime = parseInt(newStudentSignal);
+                const now = Date.now();
+                
+                // If signal is less than 5 seconds old, trigger immediate refresh
+                if (now - signalTime < 5000) {
+                    // Immediate refresh
+                    refreshStudentsData();
+                    refreshCounter();
+                    
+                    // Clear the signal so we don't refresh again
+                    localStorage.removeItem('newStudentAdded');
+                    
+                    // Show notification
+                    showNotification('تم إضافة طالب جديد! 🎉', 'success');
+                }
+            }
+        }, 500);
+        
+        // Also listen for storage events (when localStorage changes in another tab)
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'newStudentAdded' && e.newValue) {
+                // Immediate refresh
+                refreshStudentsData();
+                refreshCounter();
+                
+                // Show notification
+                showNotification('تم إضافة طالب جديد! 🎉', 'success');
+            }
+        });
+    }
+    
+    // Listen for visibility changes
     document.addEventListener('visibilitychange', function() {
         if (!document.hidden) {
-            refreshData();
+            refreshStudentsData();
+            refreshCounter();
         }
     });
     
     // Initialize previous counts on page load
     document.addEventListener('DOMContentLoaded', function() {
+        // Start the live refresh system after DOM is ready
+        try {
+            startLiveRefresh();
+        } catch (error) {
+            console.error('Error starting live refresh:', error);
+        }
+        
+        // Listen for cross-page registration signals
+        try {
+            setupRegistrationListener();
+        } catch (error) {
+            console.error('Error setting up registration listener:', error);
+        }
         // Initialize counts from current page data
         {% for grade_name, classes in grades.items() %}
             {% for class_info in classes %}
                 previousCounts['{{ class_info.name }}'] = {{ class_info.count }};
             {% endfor %}
         {% endfor %}
+        
+        // Initial counter update handled by startLiveRefresh()
     });
     
     // Fullscreen functionality
     function toggleFullscreen() {
         const elem = document.documentElement;
         const btn = document.getElementById('fullscreenBtn');
+        const btnTop = document.getElementById('fullscreenBtnTop');
         
         if (!document.fullscreenElement) {
             elem.requestFullscreen().then(() => {
-                btn.innerHTML = '<i class="fas fa-compress me-2"></i>خروج من الشاشة الكاملة';
+                if (btn) btn.innerHTML = '<i class="fas fa-compress me-2"></i>خروج من الشاشة الكاملة';
+                if (btnTop) btnTop.innerHTML = '<i class="fas fa-compress"></i><span>خروج من الشاشة الكاملة</span>';
             }).catch(err => {
                 console.log('Error enabling fullscreen:', err);
             });
         } else {
             document.exitFullscreen().then(() => {
-                btn.innerHTML = '<i class="fas fa-expand me-2"></i>شاشة كاملة';
+                if (btn) btn.innerHTML = '<i class="fas fa-expand me-2"></i>شاشة كاملة';
+                if (btnTop) btnTop.innerHTML = '<i class="fas fa-expand"></i><span>شاشة كاملة</span>';
             }).catch(err => {
                 console.log('Error exiting fullscreen:', err);
             });
@@ -494,10 +1542,14 @@
     // Listen for fullscreen changes
     document.addEventListener('fullscreenchange', function() {
         const btn = document.getElementById('fullscreenBtn');
+        const btnTop = document.getElementById('fullscreenBtnTop');
+        
         if (document.fullscreenElement) {
-            btn.innerHTML = '<i class="fas fa-compress me-2"></i>خروج من الشاشة الكاملة';
+            if (btn) btn.innerHTML = '<i class="fas fa-compress me-2"></i>خروج من الشاشة الكاملة';
+            if (btnTop) btnTop.innerHTML = '<i class="fas fa-compress"></i><span>خروج من الشاشة الكاملة</span>';
         } else {
-            btn.innerHTML = '<i class="fas fa-expand me-2"></i>شاشة كاملة';
+            if (btn) btn.innerHTML = '<i class="fas fa-expand me-2"></i>شاشة كاملة';
+            if (btnTop) btnTop.innerHTML = '<i class="fas fa-expand"></i><span>شاشة كاملة</span>';
         }
     });
     
@@ -540,9 +1592,328 @@
         }
     }
     
-    // Focus on name input when add modal opens
-    document.getElementById('addStudentModal').addEventListener('shown.bs.modal', function() {
-        document.getElementById('addStudentName').focus();
+    // Modal debugging removed - no longer needed since we use sliding panel
+    
+    // Alternative modal opening method
+    function showStudentManagementModalFallback() {
+        console.log('Using fallback modal method');
+        const modalElement = document.getElementById('studentManagementModal');
+        if (modalElement) {
+            modalElement.style.display = 'block';
+            modalElement.classList.add('show');
+            modalElement.setAttribute('aria-hidden', 'false');
+            
+            // Add backdrop
+            const backdrop = document.createElement('div');
+            backdrop.className = 'modal-backdrop fade show';
+            backdrop.id = 'fallback-backdrop';
+            document.body.appendChild(backdrop);
+            
+            // Add close functionality
+            backdrop.onclick = function() {
+                modalElement.style.display = 'none';
+                modalElement.classList.remove('show');
+                modalElement.setAttribute('aria-hidden', 'true');
+                backdrop.remove();
+            };
+        }
+    }
+    
+    // Event listeners are now handled by the unified panel functions
+    
+    // Revolutionary Settings Menu
+    function toggleSettingsMenu() {
+        const trigger = document.querySelector('.settings-trigger');
+        const menu = document.getElementById('settingsMenu');
+        
+        trigger.classList.toggle('active');
+        menu.classList.toggle('active');
+    }
+    
+    // Settings menu functions with auto-close
+    function closeSettingsMenu() {
+        document.querySelector('.settings-trigger').classList.remove('active');
+        document.getElementById('settingsMenu').classList.remove('active');
+    }
+    
+    function openStudentPanelFromSettings() {
+        closeSettingsMenu();
+        setTimeout(() => {
+            openStudentPanel();
+        }, 200);
+    }
+    
+    function openRegistrationFromSettings() {
+        closeSettingsMenu();
+        window.open('{{ url_for("register") }}', '_blank');
+    }
+    
+    function openQRCodeFromSettings() {
+        closeSettingsMenu();
+        window.open('{{ url_for("qr_code") }}', '_blank');
+    }
+    
+    function manualRefresh() {
+        closeSettingsMenu();
+        refreshStudentsData();
+        refreshCounter();
+        showNotification('تم تحديث البيانات', 'success');
+    }
+    
+    function refreshDataFromSettings() {
+        closeSettingsMenu();
+        refreshData();
+    }
+    
+    function toggleFullscreenFromSettings() {
+        closeSettingsMenu();
+        toggleFullscreen();
+    }
+    
+    function exportDataFromSettings() {
+        closeSettingsMenu();
+        exportData();
+    }
+    
+    
+    // Clear All Students Function
+    async function clearAllStudents() {
+        const passwordInput = document.getElementById('clearAllPassword');
+        const password = passwordInput.value.trim();
+        
+        if (!password) {
+            showNotification('يرجى إدخال كلمة المرور أولاً', 'error');
+            passwordInput.focus();
+            return;
+        }
+        
+        // Double confirmation
+        const firstConfirm = confirm('هل أنت متأكد من رغبتك في حذف جميع الطلاب من جميع الصفوف؟\n\nهذا الإجراء لا يمكن التراجع عنه!');
+        if (!firstConfirm) {
+            return;
+        }
+        
+        const secondConfirm = confirm('تأكيد أخير!\n\nسيتم حذف جميع الطلاب نهائياً. هل أنت متأكد 100%؟');
+        if (!secondConfirm) {
+            return;
+        }
+        
+        try {
+            const response = await fetch('/clear_all_students', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    password: password
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                showNotification('تم حذف جميع الطلاب بنجاح', 'success');
+                
+                // Clear the password field
+                passwordInput.value = '';
+                
+                // Refresh the display
+                refreshStudentsData();
+                refreshCounter();
+                
+                // Refresh the panel if a class is selected
+                if (currentClass) {
+                    loadStudentsForPanel();
+                }
+            } else {
+                showNotification(`خطأ: ${data.message}`, 'error');
+            }
+        } catch (error) {
+            console.error('Error clearing all students:', error);
+            showNotification('خطأ في حذف الطلاب', 'error');
+        }
+    }
+    
+    // Old function kept for compatibility
+    function openStudentModalFromSettings() {
+        openStudentPanelFromSettings();
+    }
+    
+    // Close settings menu when clicking outside or on items
+    document.addEventListener('click', function(e) {
+        const settings = document.getElementById('floatingSettings');
+        const settingsMenu = document.getElementById('settingsMenu');
+        
+        // Close if clicking outside settings area
+        if (!settings.contains(e.target)) {
+            closeSettingsMenu();
+        }
+        
+        // Close if clicking on any settings item (but not on the trigger)
+        if (e.target.closest('.settings-item')) {
+            setTimeout(closeSettingsMenu, 100);
+        }
     });
+    
+    // Quick Add Student Function
+    async function quickAddStudent(className) {
+        const studentName = prompt(`أدخل اسم الطالب الجديد في ${className}:`);
+        if (!studentName || !studentName.trim()) return;
+        
+        try {
+            const response = await fetch('/add_student', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    name: studentName.trim(),
+                    class: className
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                showAlert(data.message, 'success');
+                smoothRefreshData();
+            } else {
+                showAlert(data.message, 'warning');
+            }
+        } catch (error) {
+            showAlert('حدث خطأ. الرجاء المحاولة مرة أخرى', 'danger');
+        }
+    }
+    
+    // View Class Details
+    function viewClassDetails(className) {
+        // Could open a detailed modal or navigate to a detailed view
+        alert(`عرض تفاصيل ${className} - قريباً`);
+    }
+    
+    // Show All Students (for classes with >30 students)
+    function showAllStudents(className) {
+        alert(`عرض جميع طلاب ${className} - قريباً`);
+    }
+    
+    // Theme Toggle
+    function toggleTheme() {
+        const body = document.body;
+        body.classList.toggle('dark-theme');
+        
+        // Save preference
+        localStorage.setItem('theme', body.classList.contains('dark-theme') ? 'dark' : 'light');
+        
+        showAlert('تم تغيير المظهر', 'info');
+    }
+    
+    // Export Data
+    function exportData() {
+        fetch('/api/export', {
+            method: 'GET'
+        })
+        .then(response => response.blob())
+        .then(blob => {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.download = 'school_data.json';
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            showAlert('تم تصدير البيانات بنجاح', 'success');
+        })
+        .catch(error => {
+            showAlert('فشل في تصدير البيانات', 'danger');
+        });
+    }
+    
+    // Enhanced update function for new design
+    function updateClassCardsUltra(grades) {
+        let newRegistrations = [];
+        
+        Object.keys(grades).forEach(gradeName => {
+            grades[gradeName].forEach(classInfo => {
+                // Escape class name for HTML (replace quotes with HTML entities)
+                const escapedClassName = classInfo.name.replace(/"/g, '&#34;');
+                const studentsContainer = document.getElementById(`students-${escapedClassName}`);
+                const countElement = document.querySelector(`[data-class="${escapedClassName}"] .count-number`);
+                
+                // Check if this is a new registration
+                const previousCount = previousCounts[classInfo.name] || 0;
+                if (classInfo.count > previousCount) {
+                    newRegistrations.push({
+                        className: classInfo.name,
+                        newCount: classInfo.count,
+                        previousCount: previousCount
+                    });
+                    
+                    // Add ultra glow effect for new registration
+                    const card = document.querySelector(`[data-class="${escapedClassName}"]`);
+                    if (card) {
+                        card.style.animation = 'glow 3s ease-in-out';
+                        setTimeout(() => {
+                            card.style.animation = '';
+                        }, 3000);
+                    }
+                }
+                
+                // Update the previous count
+                previousCounts[classInfo.name] = classInfo.count;
+                
+                if (studentsContainer) {
+                    // Show only first 30 students
+                    const studentsToShow = classInfo.students ? classInfo.students.slice(0, 30) : [];
+                    
+                    if (studentsToShow.length > 0) {
+                        studentsContainer.innerHTML = studentsToShow.map((student, index) => `
+                            <div class="student-card" data-index="${index + 1}" style="animation: fadeIn 0.5s ease-out ${index * 0.1}s both;">
+                                <div class="student-avatar">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div class="student-info">
+                                    <span class="student-name">${student}</span>
+                                    <span class="student-number">#${index + 1}</span>
+                                </div>
+                            </div>
+                        `).join('');
+                    } else {
+                        studentsContainer.innerHTML = `
+                            <div class="empty-class">
+                                <div class="empty-icon">
+                                    <i class="fas fa-user-plus"></i>
+                                </div>
+                                <p class="empty-text">لا يوجد طلاب</p>
+                                <button class="empty-action" onclick="quickAddStudent('${classInfo.name}')">
+                                    إضافة أول طالب
+                                </button>
+                            </div>
+                        `;
+                    }
+                }
+                
+                if (countElement) {
+                    // Smooth number transition
+                    const currentCount = parseInt(countElement.textContent) || 0;
+                    if (currentCount !== classInfo.count) {
+                        animateNumber(countElement, currentCount, classInfo.count);
+                    }
+                }
+            });
+        });
+        
+        // Show subtle notifications for new registrations
+        if (newRegistrations.length > 0) {
+            newRegistrations.forEach(reg => {
+                showNewRegistrationNotification(reg.className, reg.newCount);
+            });
+            
+            // Soft notification sound
+            playNotificationSound();
+        }
+    }
+    
+    // ALL FUNCTIONS NOW DEFINED AT THE TOP - DUPLICATES REMOVED
 </script>
 {% endblock %}

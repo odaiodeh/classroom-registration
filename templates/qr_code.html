@@ -9,9 +9,9 @@
             <div class="card-header bg-info text-white text-center py-4">
                 <h2 class="mb-0">
                     <i class="fas fa-qrcode me-2"></i>
-                    رمز QR للتسجيل
+                    {{ school_settings.texts.qr_code_title if school_settings and school_settings.texts else "رمز QR للتسجيل" }}
                 </h2>
-                <p class="mb-0 mt-2 opacity-75">امسح الرمز للوصول السريع لصفحة التسجيل</p>
+                <p class="mb-0 mt-2 opacity-75">{{ school_settings.texts.qr_code_instructions if school_settings and school_settings.texts else "امسح الرمز للوصول السريع لصفحة التسجيل" }}</p>
             </div>
             
             <div class="card-body text-center p-5">

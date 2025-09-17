@@ -105,3 +105,14 @@ class Database:
         data['password'] = new_password
         self._write_data(data)
         return True
+    
+    def clear_all_students(self) -> bool:
+        """Clear all students from all classes"""
+        try:
+            data = self._read_data()
+            data['students'] = {}  # Clear all students
+            self._write_data(data)
+            return True
+        except Exception as e:
+            print(f"Error clearing all students: {e}")
+            return False
