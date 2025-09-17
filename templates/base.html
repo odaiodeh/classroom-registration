@@ -2490,9 +2490,18 @@
         
         /* Tablet and Medium Mobile Responsive Design */
         @media (max-width: 768px) {
+            body {
+                background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 25%, #0f766e 50%, #115e59 75%, #1e293b 100%) !important;
+                background-attachment: fixed !important;
+            }
+            
             .main-container {
                 margin: 10px;
                 padding: 20px;
+                background: var(--glass-bg-light) !important;
+                backdrop-filter: blur(25px) !important;
+                border: 2px solid var(--glass-border-light) !important;
+                box-shadow: var(--glass-shadow), 0 0 50px rgba(30, 58, 138, 0.2) !important;
             }
             
             .header-content {
@@ -2564,10 +2573,15 @@
             
             .ultra-class-card {
                 margin-bottom: 20px;
+                background: var(--glass-bg-light) !important;
+                backdrop-filter: blur(25px) !important;
+                border: 2px solid var(--glass-border-light) !important;
+                box-shadow: 0 12px 35px rgba(30, 58, 138, 0.3), 0 0 25px rgba(20, 184, 166, 0.2) !important;
             }
             
             .ultra-class-card:hover {
                 transform: translateY(-5px) scale(1.01);
+                box-shadow: 0 20px 50px rgba(30, 58, 138, 0.4), 0 0 35px rgba(20, 184, 166, 0.3) !important;
             }
             
             .class-name-ultra {
@@ -2606,12 +2620,20 @@
             body {
                 font-size: 14px;
                 overflow-x: hidden;
+                background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 25%, #0f766e 50%, #115e59 75%, #1e293b 100%) !important;
+                background-attachment: fixed !important;
+                min-height: 100vh !important;
             }
             
             .main-container {
                 margin: 5px;
                 padding: 15px;
                 border-radius: 15px;
+                background: var(--glass-bg-light) !important;
+                backdrop-filter: blur(25px) !important;
+                -webkit-backdrop-filter: blur(25px) !important;
+                border: 2px solid var(--glass-border-light) !important;
+                box-shadow: var(--glass-shadow), 0 0 50px rgba(30, 58, 138, 0.2) !important;
             }
             
             /* Header Mobile Optimization */
@@ -2628,6 +2650,11 @@
             
             .school-header {
                 padding: 20px 15px;
+                background: var(--glass-bg) !important;
+                backdrop-filter: blur(25px) !important;
+                border: 2px solid var(--glass-border) !important;
+                border-radius: var(--border-radius-lg) !important;
+                box-shadow: var(--glass-shadow), 0 0 30px rgba(74, 108, 247, 0.3) !important;
             }
             
             .school-title {
@@ -2712,6 +2739,15 @@
                 padding: 15px 20px;
                 margin-bottom: 20px;
                 text-align: center;
+                background: var(--glass-bg) !important;
+                color: var(--text-primary) !important;
+                border-radius: var(--border-radius-lg) !important;
+                box-shadow: var(--glass-shadow) !important;
+                backdrop-filter: blur(25px) !important;
+                border: 2px solid var(--glass-border) !important;
+                font-family: 'Cairo', sans-serif !important;
+                font-weight: 800 !important;
+                text-shadow: 0 2px 20px rgba(30, 58, 138, 0.4) !important;
             }
             
             /* Ultra Grid Mobile */
@@ -2728,6 +2764,11 @@
                 margin-bottom: 15px;
                 padding: 0;
                 border-radius: 15px;
+                background: var(--glass-bg-light) !important;
+                backdrop-filter: blur(25px) !important;
+                -webkit-backdrop-filter: blur(25px) !important;
+                border: 2px solid var(--glass-border-light) !important;
+                box-shadow: 0 12px 35px rgba(30, 58, 138, 0.3), 0 0 25px rgba(20, 184, 166, 0.2) !important;
             }
             
             .ultra-class-card:hover {
@@ -2792,6 +2833,14 @@
                 font-size: 1rem !important;
                 border-radius: 8px;
                 border-right-width: 3px;
+                background: var(--glass-bg-light) !important;
+                backdrop-filter: blur(15px) !important;
+                border-right: 4px solid var(--text-accent-teal) !important;
+                box-shadow: var(--glass-shadow) !important;
+                color: var(--text-primary) !important;
+                font-family: 'Cairo', sans-serif !important;
+                font-weight: 700 !important;
+                text-shadow: 0 2px 10px rgba(30, 58, 138, 0.3) !important;
             }
             
             .student-item:hover {
