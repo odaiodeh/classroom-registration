@@ -2,16 +2,49 @@ from flask import Flask, render_template, request, jsonify, redirect, url_for, f
 import io
 import base64
 import os
+import sys
+import argparse
 from database import Database
 from utils import reshape_arabic_text, generate_qr_code, get_registration_url
-from classes_manager import classes_manager
+from classes_manager import ClassesManager
 import json
 
 app = Flask(__name__)
 app.secret_key = 'school_secret_key_2024'  # Change this in production
 
+# Parse command line arguments
+def parse_arguments():
+    parser = argparse.ArgumentParser(description='School Classes Management System')
+    parser.add_argument('--config', '-c', 
+                       default='classes.json',
+                       help='Path to classes configuration file (default: classes.json)')
+    parser.add_argument('--port', '-p', 
+                       type=int, 
+                       default=5000,
+                       help='Port to run the server on (default: 5000)')
+    parser.add_argument('--host', 
+                       default='127.0.0.1',
+                       help='Host to run the server on (default: 127.0.0.1)')
+    parser.add_argument('--debug', 
+                       action='store_true',
+                       help='Run in debug mode')
+    return parser.parse_args()
+
 # Initialize database
 db = Database()
+
+# Classes manager - will be initialized based on command line args
+classes_manager = None
+
+def init_classes_manager(config_file='classes.json'):
+    """Initialize the classes manager with the specified config file"""
+    global classes_manager
+    classes_manager = ClassesManager(config_file=config_file)
+
+# Initialize with default config if not running as main script
+# This will be overridden if run with command line arguments
+if classes_manager is None:
+    init_classes_manager()
 
 @app.route('/')
 def home():
@@ -454,30 +487,18 @@ def refresh_data():
         return jsonify({'success': False, 'error': str(e)}), 500
 
 if __name__ == '__main__':
-    import argparse
-    import sys
-    
     # Parse command line arguments
-    parser = argparse.ArgumentParser(description='School Registration Web Application')
-    parser.add_argument('--port', '-p', type=int, default=5002, 
-                       help='Port number to run the server on (default: 5002)')
-    parser.add_argument('--host', type=str, default='0.0.0.0',
-                       help='Host to bind to (default: 0.0.0.0)')
-    parser.add_argument('--debug', action='store_true', default=True,
-                       help='Enable debug mode (default: True)')
-    parser.add_argument('--no-debug', action='store_true',
-                       help='Disable debug mode')
+    args = parse_arguments()
     
-    args = parser.parse_args()
-    
-    # Handle debug mode
-    debug_mode = args.debug and not args.no_debug
+    # Initialize classes manager with specified config file
+    init_classes_manager(args.config)
     
     # Print startup information
     print(f"🚀 Starting School Registration Server...")
+    print(f"📁 Config file: {args.config}")
     print(f"📍 Host: {args.host}")
     print(f"🔌 Port: {args.port}")
-    print(f"🐛 Debug: {debug_mode}")
+    print(f"🐛 Debug: {args.debug}")
     print(f"🌐 Local URL: http://localhost:{args.port}")
     print(f"🌐 Network URL: http://{args.host}:{args.port}")
     print(f"📱 QR Code: http://localhost:{args.port}/qr_code")
@@ -486,7 +507,7 @@ if __name__ == '__main__':
     
     # Enable debug mode and set host to allow external access
     try:
-        app.run(debug=debug_mode, host=args.host, port=args.port, threaded=True)
+        app.run(debug=args.debug, host=args.host, port=args.port, threaded=True)
     except OSError as e:
         if "Address already in use" in str(e):
             print(f"❌ Error: Port {args.port} is already in use!")

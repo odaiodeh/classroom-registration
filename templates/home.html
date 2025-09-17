@@ -3,12 +3,6 @@
 {% block content %}
 <!-- Live Status Panel -->
 <div class="live-status-panel">
-    <!-- Live Indicator -->
-    <div class="live-indicator">
-        <span>مباشر</span>
-        <small id="lastRefresh" style="display:block; font-size:10px; opacity:0.7;">آخر تحديث: --:--:--</small>
-    </div>
-    
     <!-- Overall Student Count -->
     <div class="overall-counter">
         <div class="counter-content">
@@ -20,6 +14,17 @@
                     <span class="counter-unit">{{ school_settings.texts.students_count if school_settings and school_settings.texts else "طالب" }}</span>
                 </div>
             </div>
+        </div>
+    </div>
+    
+    <!-- Live Indicator (moved below counter and made bigger) -->
+    <div class="live-indicator live-indicator-large">
+        <div class="live-pulse-icon">
+            <i class="fas fa-broadcast-tower"></i>
+        </div>
+        <div class="live-content">
+            <span class="live-text">مباشر</span>
+            <small id="lastRefresh" class="last-refresh">آخر تحديث: --:--:--</small>
         </div>
     </div>
 </div>

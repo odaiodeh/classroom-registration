@@ -10,36 +10,41 @@
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <!-- Google Fonts for Arabic and Modern Typography -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Sans+Arabic:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Sans+Arabic:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            /* Classic Elegant Color Palette */
-            --primary: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
-            --secondary: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%);
-            --success: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
-            --danger: linear-gradient(135deg, #c0392b 0%, #e74c3c 100%);
-            --warning: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
-            --info: linear-gradient(135deg, #2980b9 0%, #3498db 100%);
-            --dark: linear-gradient(135deg, #34495e 0%, #2c3e50 100%);
-            --elegant: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            /* Sophisticated Blue-Green-Yellow Palette */
+            --primary: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+            --secondary: linear-gradient(135deg, #0f766e 0%, #115e59 100%);
+            --success: linear-gradient(135deg, #059669 0%, #047857 100%);
+            --warning: linear-gradient(135deg, #f59e0b 0%, #eab308 100%);
+            --accent-yellow: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            --accent-teal: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
+            --danger: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            --elegant: linear-gradient(135deg, #1e3a8a 0%, #0f766e 100%);
             
-            /* Premium Glass Effects */
-            --glass-bg: rgba(255, 255, 255, 0.08);
-            --glass-border: rgba(255, 255, 255, 0.15);
-            --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
-            --glass-hover: rgba(255, 255, 255, 0.12);
+            /* Sophisticated Glass Effects */
+            --glass-bg: rgba(30, 58, 138, 0.1);
+            --glass-bg-light: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(30, 58, 138, 0.2);
+            --glass-border-light: rgba(255, 255, 255, 0.15);
+            --glass-shadow: 0 20px 60px rgba(30, 58, 138, 0.3);
+            --glass-hover: rgba(30, 58, 138, 0.15);
             
-            /* Refined Text Colors */
-            --text-primary: #2c3e50;
-            --text-secondary: #7f8c8d;
-            --text-light: rgba(255, 255, 255, 0.95);
+            /* Elegant Text Colors */
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.9);
+            --text-light: #ffffff;
             --text-muted: rgba(255, 255, 255, 0.7);
+            --text-accent-yellow: #fbbf24;
+            --text-accent-teal: #14b8a6;
+            --text-dark: #1e293b;
             
-            /* Classic Grade Colors */
-            --grade-4: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
-            --grade-5: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%);
-            --grade-6: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            /* Harmonious Grade Colors */
+            --grade-4: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 100%);
+            --grade-5: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%);
+            --grade-6: linear-gradient(135deg, #059669 0%, #10b981 100%);
             
             --border-radius: 20px;
             --border-radius-sm: 12px;
@@ -52,14 +57,14 @@
         }
         
         * {
-            font-family: 'Inter', 'Noto Sans Arabic', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: 'Cairo', 'Inter', 'Noto Sans Arabic', -apple-system, BlinkMacSystemFont, sans-serif;
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
         
         body {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 25%, #0f3460 50%, #533483 75%, #2c3e50 100%);
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 25%, #0f766e 50%, #115e59 75%, #1e293b 100%);
             background-attachment: fixed;
             min-height: 100vh;
             direction: rtl;
@@ -75,10 +80,10 @@
             width: 100%;
             height: 100%;
             background: 
-                radial-gradient(circle at 20% 80%, rgba(52, 152, 219, 0.15) 0%, transparent 60%),
-                radial-gradient(circle at 80% 20%, rgba(142, 68, 173, 0.15) 0%, transparent 60%),
-                radial-gradient(circle at 40% 40%, rgba(39, 174, 96, 0.1) 0%, transparent 60%),
-                radial-gradient(circle at 60% 60%, rgba(231, 76, 60, 0.08) 0%, transparent 60%);
+                radial-gradient(circle at 20% 80%, rgba(30, 58, 138, 0.4) 0%, transparent 60%),
+                radial-gradient(circle at 80% 20%, rgba(15, 118, 110, 0.3) 0%, transparent 60%),
+                radial-gradient(circle at 40% 40%, rgba(20, 184, 166, 0.2) 0%, transparent 60%),
+                radial-gradient(circle at 60% 60%, rgba(251, 191, 36, 0.1) 0%, transparent 60%);
             pointer-events: none;
             z-index: -1;
             animation: backgroundFlow 20s ease-in-out infinite;
@@ -92,14 +97,14 @@
         }
         
         .main-container {
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
+            background: var(--glass-bg-light);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 2px solid var(--glass-border-light);
             border-radius: var(--border-radius-lg);
-            box-shadow: var(--glass-shadow);
-            margin: 20px auto;
-            padding: 40px;
+            box-shadow: var(--glass-shadow), 0 0 50px rgba(30, 58, 138, 0.2);
+            margin: 25px auto;
+            padding: 50px;
             max-width: 1400px;
             position: relative;
             overflow: hidden;
@@ -117,12 +122,12 @@
         
         .school-header {
             margin-bottom: 50px;
-            padding: 30px;
+            padding: 40px;
             background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow-lg);
+            backdrop-filter: blur(25px);
+            border: 2px solid var(--glass-border);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--glass-shadow), 0 0 30px rgba(74, 108, 247, 0.3);
             position: relative;
             overflow: hidden;
         }
@@ -144,21 +149,21 @@
         }
         
         .logo-image {
-            width: 120px;
-            height: 120px;
+            width: clamp(140px, 12vw, 180px);
+            height: clamp(140px, 12vw, 180px);
             border-radius: 50%;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-            border: 4px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 12px 40px rgba(30, 58, 138, 0.2);
+            border: 4px solid var(--text-accent-yellow);
             transition: all 0.3s ease;
             object-fit: cover;
-            background: white;
-            padding: 2px;
+            background: transparent;
+            padding: 0;
         }
         
         .logo-image:hover {
-            transform: scale(1.05);
-            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
-            border-color: rgba(255, 255, 255, 0.4);
+            transform: scale(1.08);
+            box-shadow: 0 18px 50px rgba(30, 58, 138, 0.3);
+            border-color: var(--text-accent-teal);
         }
         
         .school-info {
@@ -178,22 +183,25 @@
         }
         
         .school-title {
-            font-size: clamp(2rem, 5vw, 3.5rem);
-            font-weight: 800;
-            margin-bottom: 15px;
-            color: var(--text-light);
-            text-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
-            line-height: 1.2;
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 900;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+            text-shadow: 0 4px 30px rgba(30, 58, 138, 0.4);
+            line-height: 1.1;
             letter-spacing: -0.02em;
+            font-family: 'Cairo', sans-serif;
         }
         
         .school-subtitle {
-            font-size: clamp(1rem, 3vw, 1.4rem);
-            font-weight: 500;
-            color: var(--text-light);
-            opacity: 0.9;
+            font-size: clamp(1.4rem, 4vw, 2.2rem);
+            font-weight: 700;
+            color: var(--text-accent-yellow);
+            opacity: 0.95;
             line-height: 1.4;
             letter-spacing: 0.01em;
+            text-shadow: 0 3px 20px rgba(251, 191, 36, 0.4);
+            font-family: 'Cairo', sans-serif;
         }
         
         .grade-section {
@@ -202,19 +210,21 @@
         }
         
         .grade-title {
-            font-size: clamp(1.5rem, 4vw, 2.2rem);
-            font-weight: 700;
-            margin-bottom: 30px;
-            padding: 25px 30px;
-            border-radius: var(--border-radius);
+            font-size: clamp(1.8rem, 5vw, 2.8rem);
+            font-weight: 800;
+            margin-bottom: 35px;
+            padding: 30px 35px;
+            border-radius: var(--border-radius-lg);
             text-align: center;
-            color: var(--text-light);
+            color: var(--text-primary);
             position: relative;
             overflow: hidden;
-            box-shadow: var(--shadow-lg);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: var(--glass-shadow);
+            backdrop-filter: blur(25px);
+            border: 2px solid var(--glass-border);
             letter-spacing: -0.01em;
+            font-family: 'Cairo', sans-serif;
+            text-shadow: 0 2px 20px rgba(30, 58, 138, 0.4);
         }
         
         .grade-title::before {
@@ -250,12 +260,12 @@
         
         /* Ultra-Modern Class Cards */
         .ultra-class-card {
-            background: var(--glass-bg);
+            background: var(--glass-bg-light);
             backdrop-filter: blur(25px);
             -webkit-backdrop-filter: blur(25px);
-            border: 1px solid var(--glass-border);
+            border: 2px solid var(--glass-border-light);
             border-radius: var(--border-radius-lg);
-            box-shadow: var(--shadow-xl);
+            box-shadow: var(--glass-shadow), 0 0 40px rgba(30, 58, 138, 0.2);
             transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             flex-direction: column;
@@ -267,9 +277,9 @@
         }
         
         .ultra-class-card:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
-            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 35px 100px rgba(30, 58, 138, 0.4), 0 0 50px rgba(20, 184, 166, 0.3);
+            border-color: var(--glass-border-light);
         }
         
         .class-header-ultra {
@@ -299,12 +309,13 @@
         }
         
         .class-name-ultra {
-            font-size: clamp(1.2rem, 3vw, 1.8rem);
-            font-weight: 800;
-            color: var(--text-light);
+            font-size: clamp(1.5rem, 4vw, 2.2rem);
+            font-weight: 900;
+            color: var(--text-accent-yellow);
             margin: 0;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            text-shadow: 0 3px 20px rgba(251, 191, 36, 0.4);
             letter-spacing: -0.02em;
+            font-family: 'Cairo', sans-serif;
         }
         
         .student-counter {
@@ -455,10 +466,12 @@
         }
         
         .student-name {
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: var(--text-light);
-            line-height: 1.2;
+            font-size: clamp(1.2rem, 2.5vw, 1.6rem);
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1.3;
+            font-family: 'Cairo', sans-serif;
+            text-shadow: 0 2px 10px rgba(30, 58, 138, 0.3);
         }
         
         .student-number {
@@ -598,12 +611,14 @@
         }
         
         .class-name {
-            font-size: clamp(1rem, 2.5vw, 1.3rem);
-            font-weight: 700;
+            font-size: clamp(1.3rem, 3vw, 1.8rem);
+            font-weight: 800;
             margin: 0;
             line-height: 1.2;
             letter-spacing: -0.01em;
-            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+            text-shadow: 0 2px 15px rgba(251, 191, 36, 0.4);
+            color: var(--text-accent-yellow);
+            font-family: 'Cairo', sans-serif;
         }
         
         .student-count {
@@ -757,6 +772,18 @@
             }
         }
         
+        /* Large desktop screens */
+        @media (min-width: 1200px) {
+            .logo-image {
+                width: 180px !important;
+                height: 180px !important;
+            }
+            
+            .student-name {
+                font-size: 1.5rem !important;
+            }
+        }
+        
         /* Ultra-wide screens (monitors larger than 2000px) */
         @media (min-width: 2000px) {
             .container-fluid .main-container {
@@ -781,23 +808,29 @@
                 font-size: 1rem;
                 padding: 15px;
             }
+            
+            .logo-image {
+                width: 200px !important;
+                height: 200px !important;
+            }
         }
         
         .student-item {
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(10px);
-            padding: 12px 15px;
-            margin-bottom: 8px;
+            background: var(--glass-bg-light);
+            backdrop-filter: blur(15px);
+            padding: 16px 20px;
+            margin-bottom: 10px;
             border-radius: var(--border-radius-sm);
-            border-right: 3px solid rgba(255, 255, 255, 0.4);
-            box-shadow: var(--shadow-sm);
-            font-size: inherit;
+            border-right: 4px solid var(--text-accent-teal);
+            box-shadow: var(--glass-shadow);
+            font-size: clamp(1.1rem, 2vw, 1.4rem);
             line-height: 1.4;
             transition: all 0.3s ease;
-            color: var(--text-light);
-            font-weight: 500;
+            color: var(--text-primary);
+            font-weight: 600;
             position: relative;
             overflow: hidden;
+            font-family: 'Cairo', sans-serif;
         }
         
         .student-item::before {
@@ -812,9 +845,10 @@
         }
         
         .student-item:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: translateX(-3px);
-            border-right-color: rgba(255, 255, 255, 0.6);
+            background: var(--glass-hover);
+            transform: translateX(-5px) translateY(-3px);
+            box-shadow: 0 12px 40px rgba(30, 58, 138, 0.3);
+            border-right-color: var(--text-accent-yellow);
         }
         
         .student-item:hover::before {
@@ -1713,6 +1747,76 @@
             100% { transform: scale(1); }
         }
         
+        /* Enhanced Live Indicator - Larger Version Below Counter */
+        .live-indicator-large {
+            background: var(--glass-bg-light);
+            backdrop-filter: blur(25px);
+            border: 2px solid rgba(0, 255, 136, 0.4);
+            border-radius: 20px;
+            padding: 20px 25px;
+            box-shadow: var(--glass-shadow), 0 0 30px rgba(0, 255, 136, 0.3);
+            min-width: 320px;
+            position: relative;
+            overflow: hidden;
+            animation: liveBlink 3s infinite;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .live-indicator-large::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(0, 255, 136, 0.05), rgba(0, 200, 100, 0.05));
+            animation: shimmerLive 4s infinite;
+        }
+        
+        .live-pulse-icon {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .live-pulse-icon i {
+            font-size: 2.2rem;
+            color: #00ff88;
+            animation: livePulse 1.5s infinite;
+            text-shadow: 0 0 15px rgba(0, 255, 136, 0.8);
+            filter: drop-shadow(0 0 10px rgba(0, 255, 136, 0.6));
+        }
+        
+        .live-content {
+            flex: 1;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .live-text {
+            display: block;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #00ff88;
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+            margin-bottom: 5px;
+            font-family: 'Cairo', sans-serif;
+        }
+        
+        .last-refresh {
+            display: block;
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 500;
+            opacity: 0.9;
+        }
+        
+        @keyframes shimmerLive {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
         /* Modern Animations */
         @keyframes fadeIn {
             from {
@@ -1940,12 +2044,12 @@
             right: -500px;
             width: 500px;
             height: 100vh;
-            background: linear-gradient(135deg, var(--elegant) 0%, var(--dark) 100%);
+            background: var(--glass-bg-light);
             backdrop-filter: blur(25px);
-            border-left: 1px solid var(--glass-border);
+            border-left: 3px solid var(--glass-border-light);
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             overflow-y: auto;
-            box-shadow: -10px 0 50px rgba(0, 0, 0, 0.3);
+            box-shadow: -25px 0 80px rgba(30, 58, 138, 0.3);
         }
         
         .student-management-panel.active .panel-content {
@@ -1954,21 +2058,22 @@
         
         .panel-header {
             display: flex;
-            justify-content: between;
+            justify-content: space-between;
             align-items: center;
-            padding: 25px 20px;
-            border-bottom: 1px solid var(--glass-border);
-            background: var(--glass-bg);
-            backdrop-filter: blur(15px);
+            padding: 30px 25px;
+            border-bottom: 3px solid var(--glass-border-light);
+            background: var(--glass-bg-light);
+            backdrop-filter: blur(20px);
         }
         
         .panel-title {
             display: flex;
             align-items: center;
-            color: var(--text-light);
-            font-size: 1.3rem;
-            font-weight: 700;
+            color: var(--text-primary);
+            font-size: 1.6rem;
+            font-weight: 800;
             flex: 1;
+            font-family: 'Cairo', sans-serif;
         }
         
         .panel-close-btn {
@@ -2020,46 +2125,53 @@
         
         .panel-select, .panel-input {
             width: 100%;
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
+            background: var(--glass-bg-light);
+            border: 2px solid var(--glass-border-light);
             border-radius: var(--border-radius-sm);
-            color: var(--text-light);
-            padding: 12px 16px;
-            font-size: 1rem;
+            color: var(--text-primary);
+            padding: 14px 18px;
+            font-size: 1.1rem;
             transition: all 0.3s ease;
-            margin-bottom: 15px;
+            margin-bottom: 18px;
+            box-shadow: var(--glass-shadow);
+            font-family: 'Cairo', sans-serif;
+            font-weight: 500;
         }
         
         .panel-select:focus, .panel-input:focus {
             outline: none;
-            border-color: var(--primary);
+            border-color: var(--text-accent-yellow);
             background: var(--glass-hover);
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+            box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.3), var(--glass-shadow);
+            transform: translateY(-3px);
         }
         
         .panel-btn {
             width: 100%;
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            color: var(--text-light);
-            padding: 12px 20px;
+            background: var(--accent-teal);
+            border: 2px solid transparent;
+            color: white;
+            padding: 14px 24px;
             border-radius: var(--border-radius-sm);
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
             justify-content: center;
+            box-shadow: 0 12px 35px rgba(20, 184, 166, 0.4);
+            font-family: 'Cairo', sans-serif;
+            font-size: 1.1rem;
         }
         
         .panel-btn-success {
-            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
-            border-color: #27ae60;
+            background: var(--success);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
         }
         
         .panel-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-lg);
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 18px 50px rgba(20, 184, 166, 0.6);
         }
         
         .refresh-btn {
@@ -2181,8 +2293,8 @@
         
         /* Bigger student text */
         .student-name {
-            font-size: 1.1rem !important;
-            font-weight: 600;
+            font-size: 1.8rem !important;
+            font-weight: 800;
         }
         
         .student-panel-card .student-panel-info h6 {
@@ -2204,13 +2316,13 @@
         
         /* Enhanced Overall Counter */
         .overall-counter {
-            background: linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.6));
+            background: var(--glass-bg-light);
             backdrop-filter: blur(25px);
-            border: 2px solid rgba(76, 175, 80, 0.3);
-            border-radius: 20px;
-            padding: 20px 25px;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4), 0 0 30px rgba(76, 175, 80, 0.2);
-            min-width: 280px;
+            border: 2px solid var(--text-accent-teal);
+            border-radius: 24px;
+            padding: 25px 30px;
+            box-shadow: var(--glass-shadow), 0 0 40px rgba(20, 184, 166, 0.3);
+            min-width: 320px;
             position: relative;
             overflow: hidden;
         }
@@ -2222,23 +2334,26 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(45deg, rgba(76, 175, 80, 0.1), rgba(56, 142, 60, 0.1));
+            background: linear-gradient(45deg, rgba(20, 184, 166, 0.1), rgba(14, 165, 233, 0.1));
             animation: shimmer 3s infinite;
         }
         
         .counter-content {
             display: flex;
             align-items: center;
-            gap: 15px;
-            color: var(--text-light);
+            gap: 18px;
+            color: var(--text-primary);
             position: relative;
             z-index: 1;
         }
         
         .counter-content i {
-            color: #4CAF50;
-            font-size: 2rem;
-            text-shadow: 0 0 20px rgba(76, 175, 80, 0.6);
+            background: var(--accent-teal);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 2.2rem;
+            filter: drop-shadow(0 0 15px rgba(20, 184, 166, 0.5));
             animation: glow 2s infinite alternate;
         }
         
@@ -2339,6 +2454,25 @@
             .counter-unit {
                 font-size: 1.3rem;
             }
+            
+            /* Large screen live indicator enhancements */
+            .live-indicator-large {
+                min-width: 350px;
+                padding: 25px 30px;
+                transform: scale(1.1);
+            }
+            
+            .live-pulse-icon i {
+                font-size: 2.5rem;
+            }
+            
+            .live-text {
+                font-size: 1.7rem;
+            }
+            
+            .last-refresh {
+                font-size: 1.1rem;
+            }
         }
         
         @media (min-width: 1920px) {
@@ -2356,6 +2490,25 @@
                 font-size: 2.5rem;
                 padding: 12px 24px;
             }
+            
+            /* Ultra-wide screen live indicator */
+            .live-indicator-large {
+                min-width: 380px;
+                padding: 30px 35px;
+                transform: scale(1.2);
+            }
+            
+            .live-pulse-icon i {
+                font-size: 3rem;
+            }
+            
+            .live-text {
+                font-size: 2rem;
+            }
+            
+            .last-refresh {
+                font-size: 1.2rem;
+            }
         }
         
         /* Header Responsive Design */
@@ -2365,8 +2518,8 @@
             }
             
             .logo-image {
-                width: 100px;
-                height: 100px;
+                width: 120px;
+                height: 120px;
             }
             
             .school-title {
@@ -2374,7 +2527,7 @@
             }
             
             .school-subtitle {
-                font-size: 1rem !important;
+                font-size: 1.2rem !important;
             }
             
             .live-status-panel {

@@ -1,89 +1,84 @@
 {
   "grades": {
-    "طبقة الروابع": {
-      "name": "طبقة الروابع",
+    "طبقة الأوائل": {
+      "name": "طبقة الأوائل",
       "color": "linear-gradient(135deg, #3498db 0%, #2980b9 100%)",
       "classes": [
         {
-          "name": "الرابع \"أ\"",
-          "code": "4-a",
+          "name": "الأول \"أ\"",
+          "code": "1-a",
           "type": "section"
         },
         {
-          "name": "الرابع \"ب\"",
-          "code": "4-b",
+          "name": "الأول \"ب\"",
+          "code": "1-b",
           "type": "section"
         },
         {
-          "name": "الرابع \"ج\"",
-          "code": "4-c",
+          "name": "الأول \"ج\"",
+          "code": "1-c",
           "type": "section"
         },
         {
-          "name": "الرابع \"د\"",
-          "code": "4-d",
-          "type": "section"
-        },
-        {
-          "name": "الرابع \"هـ\"",
-          "code": "4-e",
+          "name": "الأول \"د\"",
+          "code": "1-d",
           "type": "section"
         }
       ]
     },
-    "طبقة الخوامس": {
-      "name": "طبقة الخوامس",
+    "طبقة الثواني": {
+      "name": "طبقة الثواني",
       "color": "linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%)",
       "classes": [
         {
-          "name": "الخامس \"أ\"",
-          "code": "5-a",
+          "name": "الثاني \"أ\"",
+          "code": "2-a",
           "type": "section"
         },
         {
-          "name": "الخامس \"ب\"",
-          "code": "5-b",
+          "name": "الثاني \"ب\"",
+          "code": "2-b",
           "type": "section"
         },
         {
-          "name": "الخامس \"ج\"",
-          "code": "5-c",
+          "name": "الثاني \"ج\"",
+          "code": "2-c",
           "type": "section"
         },
         {
-          "name": "الخامس \"د\"",
-          "code": "5-d",
+          "name": "الثاني \"د\"",
+          "code": "2-d",
           "type": "section"
         }
       ]
     },
-    "طبقة السوادس": {
-      "name": "طبقة السوادس",
+    "طبقة الثوالث": {
+      "name": "طبقة الثوالث",
       "color": "linear-gradient(135deg, #27ae60 0%, #2ecc71 100%)",
       "classes": [
         {
-          "name": "السادس \"أ\"",
-          "code": "6-a",
+          "name": "الثالث \"أ\"",
+          "code": "3-a",
           "type": "section"
         },
         {
-          "name": "السادس \"ب\"",
-          "code": "6-b",
+          "name": "الثالث \"ب\"",
+          "code": "3-b",
           "type": "section"
         },
         {
-          "name": "السادس \"ج\"",
-          "code": "6-c",
+          "name": "الثالث \"ج\"",
+          "code": "3-c",
           "type": "section"
         },
         {
-          "name": "السادس \"د\"",
-          "code": "6-d",
+          "name": "الثالث \"د\"",
+          "code": "3-d",
           "type": "section"
         },
         {
-          "name": "السادس \"هـ\"",
-          "code": "6-e",
+          "name": "الثالث \"هـ\"",
+          "code": "3-e",
           "type": "section"
         }
       ]
@@ -91,7 +86,7 @@
   },
   "settings": {
     "school_name": "المدرسة الجماهيرية بئر الأمير - الناصرة",
-    "event_title": "اجتماع أهالي طلاب الصفوف الثالثة وحتى السادسة",
+    "event_title": "اجتماع أهالي طلاب الصفوف الأولى وحتى الثالثة",
     "default_password": "admin123",
     "texts": {
       "registration_welcome": "أهلاً وسهلاً بكم في تسجيل الحضور",
