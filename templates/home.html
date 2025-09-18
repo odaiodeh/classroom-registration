@@ -157,11 +157,11 @@
                         {% endif %}
                     </div>
                     
-                    {% if class_info.count > 30 %}
+                    {% if class_info.count > 33 %}
                     <div class="students-overflow">
                         <button class="show-more-btn" onclick="showAllStudents('{{ class_info.name }}')">
                             <i class="fas fa-chevron-down"></i>
-                            عرض المزيد ({{ class_info.count - 30 }})
+                            عرض المزيد ({{ class_info.count - 33 }})
                         </button>
                     </div>
                     {% endif %}
@@ -1352,7 +1352,7 @@
     }
     
     function updateStudentsList(container, students, className) {
-        const studentsToShow = students.slice(0, 30); // Limit display
+        const studentsToShow = students.slice(0, 33); // Limit display to 33 students
         
         if (studentsToShow.length > 0) {
             container.innerHTML = studentsToShow.map((student, index) => `
@@ -1825,8 +1825,8 @@
                 previousCounts[classInfo.name] = classInfo.count;
                 
                 if (studentsContainer) {
-                    // Show only first 30 students
-                    const studentsToShow = classInfo.students ? classInfo.students.slice(0, 30) : [];
+                    // Show only first 33 students
+                    const studentsToShow = classInfo.students ? classInfo.students.slice(0, 33) : [];
                     
                     if (studentsToShow.length > 0) {
                         studentsContainer.innerHTML = studentsToShow.map((student, index) => `

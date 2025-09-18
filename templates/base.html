@@ -271,7 +271,7 @@
             flex-direction: column;
             position: relative;
             overflow: hidden;
-            min-height: 600px;
+            min-height: 650px;
             max-height: 800px;
             animation: fadeInUp 0.8s ease-out;
         }
@@ -363,13 +363,15 @@
             padding: 20px;
             display: flex;
             flex-direction: column;
+            height: 100%;
         }
         
         .students-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 12px;
-            max-height: 500px;
+            min-height: 400px;
+            max-height: 600px;
             overflow-y: auto;
             padding-right: 8px;
             scrollbar-width: thin;
@@ -2759,8 +2761,8 @@
             
             /* Ultra Class Cards Mobile */
             .ultra-class-card {
-                min-height: auto;
-                max-height: none;
+                min-height: 500px;
+                max-height: 600px;
                 margin-bottom: 15px;
                 padding: 0;
                 border-radius: 15px;
@@ -2819,6 +2821,14 @@
             /* Students Container Mobile */
             .students-container {
                 padding: 10px 15px 15px;
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+            }
+            
+            .students-grid {
+                min-height: 300px;
+                max-height: 450px;
             }
             
             .students-list {
