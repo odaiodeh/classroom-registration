@@ -3,8 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="color-scheme" content="light dark">
+    <meta name="color-scheme" content="normal">
     <meta name="theme-color" content="#1e3a8a">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <title>{% block title %}المدرسة الجماهيرية بئر الأمير - الناصرة{% endblock %}</title>
     
     <!-- Bootstrap CSS -->
@@ -33,6 +37,25 @@
             color-scheme: normal !important;
             -webkit-filter: none !important;
             filter: none !important;
+            -webkit-color-adjust: exact !important;
+            color-adjust: exact !important;
+            forced-color-adjust: none !important;
+        }
+        
+        /* Force exact color rendering on mobile */
+        @media screen and (max-width: 768px) {
+            * {
+                -webkit-filter: none !important;
+                filter: none !important;
+                -webkit-color-adjust: exact !important;
+                color-adjust: exact !important;
+                forced-color-adjust: none !important;
+            }
+            
+            body {
+                background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 25%, #0f766e 50%, #115e59 75%, #1e293b 100%) !important;
+                background-attachment: fixed !important;
+            }
         }
         
         /* Force consistent backdrop filters on mobile */
